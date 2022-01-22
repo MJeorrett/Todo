@@ -2,15 +2,14 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace Todo.Application
-{
-    public static class DependencyInjection
-    {
-        public static IServiceCollection AddApplication(this IServiceCollection services)
-        {
-            services.AddMediatR(Assembly.GetExecutingAssembly());
+namespace Todo.Application;
 
-            return services;
-        }
+public static class DependencyInjection
+{
+    public static IServiceCollection AddApplication(this IServiceCollection services)
+    {
+        services.AddMediatR(Assembly.GetExecutingAssembly());
+
+        return services;
     }
 }

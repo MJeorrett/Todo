@@ -1,25 +1,24 @@
-﻿namespace Todo.Application.Common.AppRequests
+﻿namespace Todo.Application.Common.AppRequests;
+
+public record AppResponse
 {
-    public record AppResponse
+    public int StatusCode { get; init; }
+
+    public string? Message { get; init; }
+
+    public AppResponse(int statusCode)
     {
-        public int StatusCode { get; init; }
-
-        public string? Message { get; init; }
-
-        public AppResponse(int statusCode)
-        {
-            StatusCode = statusCode;
-        }
+        StatusCode = statusCode;
     }
+}
 
-    public record AppResponse<T> : AppResponse
+public record AppResponse<T> : AppResponse
+{
+    public T Content { get; init; }
+
+    public AppResponse(T content, int statusCode) :
+        base(statusCode)
     {
-        public T Content { get; init; }
-
-        public AppResponse(T content, int statusCode) :
-            base(statusCode)
-        {
-            Content = content;
-        }
+        Content = content;
     }
 }

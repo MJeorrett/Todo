@@ -1,9 +1,8 @@
-﻿namespace Todo.Domain.Entities
-{
-    public class TodoEntity
-    {
-        public int Id { get; set; }
+﻿namespace Todo.Domain.Entities;
 
-        public string Title { get; set; } = null!;
-    }
+public class TodoEntity
+{
+    public int Id { get; set; }
+
+    public string Title { get; set; } = null!;
 }

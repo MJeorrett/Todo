@@ -1,12 +1,11 @@
 ﻿using MediatR;
 
-namespace Todo.Application.Common.AppRequests
-{
-    public interface IAppRequest<T> : IRequest<AppResponse<T>>
-    {
-    }
+namespace Todo.Application.Common.AppRequests;
 
-    public interface IAppRequest : IRequest<AppResponse>
-    {
-    }
+public interface IAppRequest<T> : IRequest<AppResponse<T>>
+{
+}
+
+public interface IAppRequest : IRequest<AppResponse>
+{
 }
