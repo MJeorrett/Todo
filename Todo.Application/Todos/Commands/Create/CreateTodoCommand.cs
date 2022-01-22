@@ -30,6 +30,6 @@ public class CreateTodoCommandHandler : IAppRequestHandler<CreateTodoCommand, in
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        return new(todoEntity.Id, 201);
+        return new(201, todoEntity.Id);
     }
 }
