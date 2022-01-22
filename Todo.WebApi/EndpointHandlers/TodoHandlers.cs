@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Todo.Application.Common.AppRequests;
 using Todo.Application.Todos.Commands.Create;
+using Todo.WebApi.Common;
 
 namespace Todo.WebApi.EndpointHandlers
 {
@@ -12,8 +14,10 @@ namespace Todo.WebApi.EndpointHandlers
                 [FromServices] IMediator mediator,
                 [FromBody] CreateTodoCommand command) =>
                 {
-                    return await mediator.Send(command);
+                    return ResultBuilder.Build(
+                        await mediator.Send(command));
                 })
+                .Produces<AppResponse<int>>(201)
                 .WithName("CreateTodo");
         }
     }

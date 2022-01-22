@@ -1,15 +1,16 @@
 ﻿using MediatR;
+using Todo.Application.Common.AppRequests;
 using Todo.Application.Common.Interfaces;
 using Todo.Domain.Entities;
 
 namespace Todo.Application.Todos.Commands.Create
 {
-    public record CreateTodoCommand : IRequest<int>
+    public record CreateTodoCommand : IAppRequest<int>
     {
         public string Title { get; init; } = null!;
     }
 
-    public class CreateTodoCommandHandler : IRequestHandler<CreateTodoCommand, int>
+    public class CreateTodoCommandHandler : IAppRequestHandler<CreateTodoCommand, int>
     {
         private readonly IApplicationDbContext _dbContext;
 
@@ -18,7 +19,7 @@ namespace Todo.Application.Todos.Commands.Create
             _dbContext = dbContext;
         }
 
-        public async Task<int> Handle(CreateTodoCommand request, CancellationToken cancellationToken)
+        public async Task<AppResponse<int>> Handle(CreateTodoCommand request, CancellationToken cancellationToken)
         {
             var todoEntity = new TodoEntity()
             {
@@ -29,7 +30,7 @@ namespace Todo.Application.Todos.Commands.Create
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return todoEntity.Id;
+            return new(todoEntity.Id, 201);
         }
     }
 }
