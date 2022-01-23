@@ -1,6 +1,8 @@
-﻿using System.Net;
+﻿using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Todo.Application.Common.AppRequests;
 using Xunit;
@@ -20,6 +22,27 @@ public static class HttpResponseMessageExtensions
                 $"content:\n{responseContent}");
 
         Assert.True(false, errorMessage);
+    }
+
+    public static async Task AssertIs400WithErrorForField(
+           this HttpResponseMessage message,
+           string expectedErrorField)
+    {
+        await message.AssertIsStatusCode(400);
+
+        var responseContent = await message.Content.ReadAsStringAsync();
+        var responseJson = JsonDocument.Parse(responseContent);
+
+        if (responseJson.RootElement.TryGetProperty("errors", out var errors))
+        {
+            var hasExpectedError = errors.TryGetProperty(expectedErrorField, out var _);
+            var errorKeys = string.Join(",", errors.EnumerateObject().Select(_ => _.Name));
+            Assert.True(hasExpectedError, $"Expected error for: {expectedErrorField}\nFound error key(s): {errorKeys}");
+        }
+        else
+        {
+            Assert.True(false, $"No 'errors' key found on the response content:\n{responseJson}");
+        }
     }
 
     public static async Task<T?> ReadResponseContentAs<T>(this HttpResponseMessage message)

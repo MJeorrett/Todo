@@ -15,7 +15,7 @@ public class CreateTodoTests : IClassFixture<CustomWebApplicationFactory>
     }
 
     [Fact]
-    public async Task ShouldPopulateAllPropertiesWhenRequestValid()
+    public async Task ShouldPopulateAllPropertiesWhenRequestIsValid()
     {
         var httpClient = _factory.CreateClient();
 

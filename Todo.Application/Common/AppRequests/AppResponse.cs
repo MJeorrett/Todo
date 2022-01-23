@@ -7,11 +7,12 @@ public record AppResponse
     [JsonIgnore]
     public int StatusCode { get; init; }
 
-    public string Message { get; init; } = "";
+    public string Message { get; init; }
 
-    public AppResponse(int statusCode)
+    public AppResponse(int statusCode, string message = "")
     {
         StatusCode = statusCode;
+        Message = message;
     }
 }
 
