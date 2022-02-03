@@ -14,6 +14,12 @@ public class TodoEntityConfiguration : IEntityTypeConfiguration<TodoEntity>
         builder.Property(_ => _.Id)
             .HasColumnName("TodoId");
 
+        builder.Property(_ => _.CreatedAt)
+            .HasConversion(ValueConverters.ZonedDateTimeValueConverter);
+
+        builder.Property(_ => _.LastUpdatedAt)
+            .HasConversion(ValueConverters.NullableZonedDateTimeValueConverter);
+
         builder.Property(_ => _.Title)
             .HasColumnType("varchar(256)");
     }

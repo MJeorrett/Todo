@@ -1,20 +1,21 @@
-﻿using System.Net.Http.Json;
+﻿using NUnit.Framework;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Todo.WebApi.E2eTests.Dtos;
-using Xunit;
 
 namespace Todo.WebApi.E2eTests.Todos;
 
-public class CreateTodoTests : IClassFixture<CustomWebApplicationFactory>
+public class CreateTodoTests
 {
-    private readonly CustomWebApplicationFactory _factory;
+    private CustomWebApplicationFactory _factory = null!;
 
-    public CreateTodoTests(CustomWebApplicationFactory factory)
+    [OneTimeSetUp]
+    public void Initialize()
     {
-        _factory = factory;
+        _factory = new CustomWebApplicationFactory();
     }
 
-    [Fact]
+    [Test]
     public async Task ShouldPopulateAllPropertiesWhenRequestIsValid()
     {
         var httpClient = _factory.CreateClient();
@@ -32,9 +33,12 @@ public class CreateTodoTests : IClassFixture<CustomWebApplicationFactory>
 
         await getByIdResponse.AssertIsStatusCode(200);
 
-        var todo = await getByIdResponse.ReadResponseContentAs<TodoDetailsDto>();
+        var actual = await getByIdResponse.ReadResponseContentAs<TodoDetailsDto>();
 
-        Assert.Equal(todoId, todo?.Id);
-        Assert.Equal("Clean bike", todo?.Title);
+        Assert.NotNull(actual);
+        Assert.AreEqual(todoId, actual!.Id);
+        Assert.AreEqual("Clean bike", actual!.Title);
+        Assert.AreEqual(_factory.MockedNow.ToDateTimeUtc(), actual!.CreatedAt);
+        Assert.Null(actual!.LastUpdatedAt);
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace Todo.Domain.Entities;
+﻿using Todo.Domain.Common;
 
-public class TodoEntity
+namespace Todo.Domain.Entities;
+
+public class TodoEntity : AuditableEntity
 {
     public int Id { get; set; }
 

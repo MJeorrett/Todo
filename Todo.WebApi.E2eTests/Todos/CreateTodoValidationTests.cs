@@ -1,19 +1,21 @@
-﻿using System.Net.Http.Json;
+﻿using NUnit.Framework;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Xunit;
 
 namespace Todo.WebApi.E2eTests.Todos;
 
-public class CreateTodoValidationTests : IClassFixture<CustomWebApplicationFactory>
+public class CreateTodoValidationTests
 {
-    private readonly CustomWebApplicationFactory _factory;
 
-    public CreateTodoValidationTests(CustomWebApplicationFactory factory)
+    private CustomWebApplicationFactory _factory = null!;
+
+    [OneTimeSetUp]
+    public void Initialize()
     {
-        _factory = factory;
+        _factory = new CustomWebApplicationFactory();
     }
 
-    [Fact]
+    [Test]
     public async Task ShouldReturn400WhenNoTitleProvied()
     {
         var httpClient = _factory.CreateClient();
@@ -26,7 +28,7 @@ public class CreateTodoValidationTests : IClassFixture<CustomWebApplicationFacto
         await actualResult.AssertIs400WithErrorForField("Title");
     }
 
-    [Fact]
+    [Test]
     public async Task ShouldReturn400WhenTitleIsEmptyString()
     {
         var httpClient = _factory.CreateClient();
@@ -39,7 +41,7 @@ public class CreateTodoValidationTests : IClassFixture<CustomWebApplicationFacto
         await actualResult.AssertIs400WithErrorForField("Title");
     }
 
-    [Fact]
+    [Test]
     public async Task ShouldReturn400WhenTitleIsToLong()
     {
         var httpClient = _factory.CreateClient();
@@ -52,7 +54,7 @@ public class CreateTodoValidationTests : IClassFixture<CustomWebApplicationFacto
         await actualResult.AssertIs400WithErrorForField("Title");
     }
 
-    [Fact]
+    [Test]
     public async Task ShouldReturn200WhenAllOk()
     {
         var httpClient = _factory.CreateClient();

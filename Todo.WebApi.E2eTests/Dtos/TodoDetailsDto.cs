@@ -1,8 +1,12 @@
-﻿namespace Todo.WebApi.E2eTests.Dtos;
+﻿using System;
+
+namespace Todo.WebApi.E2eTests.Dtos;
 
 internal record TodoDetailsDto(
     int Id,
-    string Title)
+    string Title,
+    DateTime CreatedAt,
+    DateTime? LastUpdatedAt)
 {
 
 }
