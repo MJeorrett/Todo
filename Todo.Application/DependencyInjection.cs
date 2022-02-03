@@ -1,7 +1,6 @@
 ﻿using FluentValidation.AspNetCore;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
+using Todo.Application.Common.AppRequests;
 using Todo.Application.Todos.Commands.Create;
 
 namespace Todo.Application;
@@ -10,7 +9,13 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddMediatR(Assembly.GetExecutingAssembly());
+        services.Scan(scan =>
+        {
+            scan.FromAssemblyOf<CreateTodoCommandHandler>()
+                .AddClasses(classes => classes.AssignableTo(typeof(IRequestHandler<,>)))
+                .AsSelf()
+                .WithScopedLifetime();
+        });
 
         return services;
     }

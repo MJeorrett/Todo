@@ -1,16 +1,15 @@
-﻿using MediatR;
-using Todo.Application.Common.AppRequests;
+﻿using Todo.Application.Common.AppRequests;
 using Todo.Application.Common.Interfaces;
 using Todo.Domain.Entities;
 
 namespace Todo.Application.Todos.Commands.Create;
 
-public record CreateTodoCommand : IAppRequest<int>
+public record CreateTodoCommand
 {
     public string Title { get; init; } = null!;
 }
 
-public class CreateTodoCommandHandler : IAppRequestHandler<CreateTodoCommand, int>
+public class CreateTodoCommandHandler : IRequestHandler<CreateTodoCommand, int>
 {
     private readonly IApplicationDbContext _dbContext;
 

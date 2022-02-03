@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Todo.Application.Common.AppRequests;
 using Todo.Application.Todos;
 using Todo.Application.Todos.Commands.Create;
@@ -13,21 +12,23 @@ public class TodosController : ControllerBase
 {
     [HttpPost("api/todos")]
     public async Task<ActionResult<AppResponse<int>>> CreateTodo(
-            [FromServices] IMediator mediator,
-            [FromBody] CreateTodoCommand command)
+            [FromServices] CreateTodoCommandHandler handler,
+            [FromBody] CreateTodoCommand command,
+            CancellationToken cancellationToken)
     {
-        var response = await mediator.Send(command);
+        var response = await handler.Handle(command, cancellationToken);
         return response.ToActionResult();
     }
 
     [HttpGet("api/todos/{todoId}")]
     public async Task<ActionResult<AppResponse<TodoDetailsDto>>> GetTodoById(
-           [FromServices] IMediator mediator,
-           [FromRoute] int todoId)
+           [FromServices] GetTodoByIdQueryHandler handler,
+           [FromRoute] int todoId,
+           CancellationToken cancellationToken)
     {
         var query = new GetTodoByIdQuery() { TodoId = todoId };
 
-        var response = await mediator.Send(query);
+        var response = await handler.Handle(query, cancellationToken);
         return response.ToActionResult();
     }
 }

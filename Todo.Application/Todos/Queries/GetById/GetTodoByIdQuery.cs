@@ -4,16 +4,16 @@ using Todo.Application.Common.Interfaces;
 
 namespace Todo.Application.Todos.Queries.GetById;
 
-public record GetTodoByIdQuery : IAppRequest<TodoDetailsDto>
+public record GetTodoByIdQuery
 {
     public int TodoId { get; init; }
 }
 
-public class GetByIdQueryHandler : IAppRequestHandler<GetTodoByIdQuery, TodoDetailsDto>
+public class GetTodoByIdQueryHandler : IRequestHandler<GetTodoByIdQuery, TodoDetailsDto>
 {
     private readonly IApplicationDbContext _dbContext;
 
-    public GetByIdQueryHandler(IApplicationDbContext dbContext)
+    public GetTodoByIdQueryHandler(IApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }
@@ -24,7 +24,7 @@ public class GetByIdQueryHandler : IAppRequestHandler<GetTodoByIdQuery, TodoDeta
     {
         var todoEntity = await _dbContext.Todos
             .Where(_ => _.Id == query.TodoId)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (todoEntity == null) return new(404);
 
