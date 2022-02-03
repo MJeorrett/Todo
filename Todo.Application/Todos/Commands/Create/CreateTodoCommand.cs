@@ -1,4 +1,5 @@
-﻿using Todo.Application.Common.AppRequests;
+﻿using Microsoft.Extensions.Logging;
+using Todo.Application.Common.AppRequests;
 using Todo.Application.Common.Interfaces;
 using Todo.Domain.Entities;
 
@@ -11,15 +12,21 @@ public record CreateTodoCommand
 
 public class CreateTodoCommandHandler : IRequestHandler<CreateTodoCommand, int>
 {
+    private readonly ILogger _logger;
     private readonly IApplicationDbContext _dbContext;
 
-    public CreateTodoCommandHandler(IApplicationDbContext dbContext)
+    public CreateTodoCommandHandler(
+        ILogger<CreateTodoCommandHandler> logger,
+        IApplicationDbContext dbContext)
     {
+        _logger = logger;
         _dbContext = dbContext;
     }
 
     public async Task<AppResponse<int>> Handle(CreateTodoCommand request, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Creating todo {todoTitle}.", request.Title);
+
         var todoEntity = new TodoEntity()
         {
             Title = request.Title,
@@ -28,6 +35,8 @@ public class CreateTodoCommandHandler : IRequestHandler<CreateTodoCommand, int>
         _dbContext.Todos.Add(todoEntity);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+
+        _logger.LogInformation("Successfully created todo with id {todoId}.", todoEntity.Id);
 
         return new(201, todoEntity.Id);
     }
