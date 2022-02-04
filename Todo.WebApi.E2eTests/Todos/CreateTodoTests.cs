@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Todo.WebApi.E2eTests.Dtos.Todos;
+using Todo.WebApi.E2eTests.Endpoints;
 
 namespace Todo.WebApi.E2eTests.Todos;
 
@@ -12,7 +12,7 @@ public class CreateTodoTests : TestBase
     {
         var httpClient = _factory.CreateClient();
 
-        var createResponse = await httpClient.PostAsJsonAsync("api/todos", new
+        var createResponse = await httpClient.CreateTodo(new
         {
             title = "Clean bike",
         });
@@ -21,16 +21,16 @@ public class CreateTodoTests : TestBase
 
         var todoId = await createResponse.ReadResponseContentAs<int>();
 
-        var getByIdResponse = await httpClient.GetAsync($"api/todos/{todoId}");
+        var getByIdResponse = await httpClient.GetTodoById(todoId);
 
         await getByIdResponse.AssertIsStatusCode(200);
 
-        var actual = await getByIdResponse.ReadResponseContentAs<TodoDetailsDto>();
+        var createdTodo = await getByIdResponse.ReadResponseContentAs<TodoDetailsDto>();
 
-        Assert.NotNull(actual);
-        Assert.AreEqual(todoId, actual!.Id);
-        Assert.AreEqual("Clean bike", actual!.Title);
-        Assert.AreEqual(_factory.MockedNow.ToDateTimeUtc(), actual!.CreatedAt);
-        Assert.Null(actual!.LastUpdatedAt);
+        Assert.NotNull(createdTodo);
+        Assert.AreEqual(todoId, createdTodo!.Id);
+        Assert.AreEqual("Clean bike", createdTodo!.Title);
+        Assert.AreEqual(_factory.MockedNow.ToDateTimeUtc(), createdTodo!.CreatedAt);
+        Assert.Null(createdTodo!.LastUpdatedAt);
     }
 }

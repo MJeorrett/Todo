@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Todo.WebApi.E2eTests.Endpoints;
 
 namespace Todo.WebApi.E2eTests.Todos;
 
@@ -11,10 +11,7 @@ public class CreateTodoValidationTests : TestBase
     {
         var httpClient = _factory.CreateClient();
 
-        var actualResult = await httpClient.PostAsJsonAsync("api/todos", new
-        {
-
-        });
+        var actualResult = await httpClient.CreateTodo(new { });
 
         await actualResult.AssertIs400WithErrorForField("Title");
     }
@@ -24,7 +21,7 @@ public class CreateTodoValidationTests : TestBase
     {
         var httpClient = _factory.CreateClient();
 
-        var actualResult = await httpClient.PostAsJsonAsync("api/todos", new
+        var actualResult = await httpClient.CreateTodo(new
         {
             title = "",
         });
@@ -37,7 +34,7 @@ public class CreateTodoValidationTests : TestBase
     {
         var httpClient = _factory.CreateClient();
 
-        var actualResult = await httpClient.PostAsJsonAsync("api/todos", new
+        var actualResult = await httpClient.CreateTodo(new
         {
             title = new string('a', 257),
         });
@@ -50,7 +47,7 @@ public class CreateTodoValidationTests : TestBase
     {
         var httpClient = _factory.CreateClient();
 
-        var actualResult = await httpClient.PostAsJsonAsync("api/todos", new
+        var actualResult = await httpClient.CreateTodo(new
         {
             title = new string('a', 256),
         });
