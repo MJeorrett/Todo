@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Todo.WebApi.E2eTests.Dtos;
+namespace Todo.WebApi.E2eTests.Dtos.Todos;
 
 internal record TodoDetailsDto(
     int Id,

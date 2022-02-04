@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Todo.Application.Common.Interfaces;
 
-namespace Todo.WebApi.E2eTests;
+namespace Todo.WebApi.E2eTests.WebApplicationFactory;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {

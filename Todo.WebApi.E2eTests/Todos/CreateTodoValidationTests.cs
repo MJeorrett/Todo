@@ -4,17 +4,8 @@ using System.Threading.Tasks;
 
 namespace Todo.WebApi.E2eTests.Todos;
 
-public class CreateTodoValidationTests
+public class CreateTodoValidationTests : TestBase
 {
-
-    private CustomWebApplicationFactory _factory = null!;
-
-    [OneTimeSetUp]
-    public void Initialize()
-    {
-        _factory = new CustomWebApplicationFactory();
-    }
-
     [Test]
     public async Task ShouldReturn400WhenNoTitleProvied()
     {

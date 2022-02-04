@@ -1,20 +1,12 @@
 ﻿using NUnit.Framework;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Todo.WebApi.E2eTests.Dtos;
+using Todo.WebApi.E2eTests.Dtos.Todos;
 
 namespace Todo.WebApi.E2eTests.Todos;
 
-public class CreateTodoTests
+public class CreateTodoTests : TestBase
 {
-    private CustomWebApplicationFactory _factory = null!;
-
-    [OneTimeSetUp]
-    public void Initialize()
-    {
-        _factory = new CustomWebApplicationFactory();
-    }
-
     [Test]
     public async Task ShouldPopulateAllPropertiesWhenRequestIsValid()
     {

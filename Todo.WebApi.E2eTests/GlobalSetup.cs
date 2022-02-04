@@ -5,6 +5,7 @@ using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
 using Todo.Infrastructure.Persistence;
+using Todo.WebApi.E2eTests.WebApplicationFactory;
 
 namespace Todo.WebApi.E2eTests;
 

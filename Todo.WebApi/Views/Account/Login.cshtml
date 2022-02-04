@@ -1,0 +1,8 @@
+﻿@model Todo.WebApi.ViewModels.LoginViewModel
+
+<form autocomplete="off" asp-route="Login">
+    <input type="hidden" asp-for="ReturnUrl" />
+    <input type="text" asp-for="UserName" placeholder="UserName" autofocus data-pw="user-name" />
+    <input type="password" asp-for="Password" placeholder="Password" data-pw="password" />
+    <button type="submit" data-pw="submit-login">Login</button>
+</form>
