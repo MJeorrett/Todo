@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
 using Todo.WebApi.E2eTests.Shared.Extensions;
 
-namespace Todo.WebApi.E2eTests.Todos;
+namespace Todo.WebApi.E2eTests.Todos.Commands;
 
 public class CreateTodoTests : TestBase
 {
@@ -14,7 +14,7 @@ public class CreateTodoTests : TestBase
 
         var response = await httpClient.CreateTodo(new
         {
-            title = "not me",
+            title = "Learn to code",
         });
 
         await response.AssertIsStatusCode(401);
