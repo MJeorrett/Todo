@@ -50,7 +50,7 @@ public static class IdentityExtensions
         });
     }
 
-    public static async Task CreateAspNetUser(
+    public static async Task<string> CreateAspNetUser(
         this CustomWebApplicationFactory factory,
         string email,
         string password,
@@ -65,7 +65,14 @@ public static class IdentityExtensions
             EmailConfirmed = emailConfirmed,
         };
 
-        await userManager.CreateAsync(user, password);
+        var createResult = await userManager.CreateAsync(user, password);
+
+        if (!createResult.Succeeded)
+        {
+            throw new Exception("Failed to create application user.");
+        }
+
+        return user.Id;
     }
 
     public static async Task<HttpClient> CreateHttpClientAuthenticatedAsUser(

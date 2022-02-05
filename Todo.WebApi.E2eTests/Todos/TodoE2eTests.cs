@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Todo.Application.Todos;
+using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
 using Todo.WebApi.E2eTests.Shared.Extensions;
 
@@ -12,7 +13,8 @@ public class TodoE2eTests : TestBase
     [Test]
     public async Task ShouldPopulateAllProperties()
     {
-        var httpClient = await CreateUserAndAuthenticatedHttpClient("test@mailinator.com", "Sitekit123!");
+        var userId = await Factory.CreateAspNetUser("test@mailinator.com", "Sitekit123!");
+        var httpClient = await CreateHttpClientAuthenticatedAsUser("test@mailinator.com", "Sitekit123!");
 
         var todoId = await CreateTodo(httpClient, new
         {
@@ -29,7 +31,9 @@ public class TodoE2eTests : TestBase
         Assert.AreEqual(todoId, createdTodo!.Id);
         Assert.AreEqual("Clean bike", createdTodo!.Title);
         Assert.AreEqual(Factory.MockedNow.ToDateTimeUtc(), createdTodo!.CreatedAt);
+        Assert.AreEqual(userId, createdTodo.CreatedBy);
         Assert.Null(createdTodo!.LastUpdatedAt);
+        Assert.IsEmpty(createdTodo.LastUpdatedBy);
     }
 
     private static async Task<int> CreateTodo(HttpClient httpClient, object createTodoRequest)

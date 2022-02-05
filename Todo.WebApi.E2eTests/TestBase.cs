@@ -33,13 +33,18 @@ public class TestBase
         await CreateDefaultClientApplication();
     }
 
+    public async Task<HttpClient> CreateHttpClientAuthenticatedAsUser(string userName, string password)
+    {
+        return await Factory.CreateHttpClientAuthenticatedAsUser(_testClientApplicationDetails, userName, password);
+    }
+
     public async Task<HttpClient> CreateUserAndAuthenticatedHttpClient(
-        string email,
+        string userName,
         string password)
     {
-        await Factory.CreateAspNetUser(email, password);
+        await Factory.CreateAspNetUser(userName, password);
 
-        return await Factory.CreateHttpClientAuthenticatedAsUser(_testClientApplicationDetails, email, password);
+        return await Factory.CreateHttpClientAuthenticatedAsUser(_testClientApplicationDetails, userName, password);
     }
 
     private static void EnsureDatabasesCreatedAndMigrated(IServiceProvider services)

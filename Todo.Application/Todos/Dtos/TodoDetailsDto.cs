@@ -8,5 +8,9 @@ public record TodoDetailsDto
 
     public DateTime CreatedAt { get; init; }
 
+    public string CreatedBy { get; init; } = "";
+
     public DateTime? LastUpdatedAt { get; init; }
+
+    public string LastUpdatedBy { get; init; } = "";
 }

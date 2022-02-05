@@ -13,13 +13,16 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     public DbSet<TodoEntity> Todos { get; init; } = null!;
 
     private readonly IDateTimeService _dateTimeService;
+    private readonly ICurrentUserService _currentUserService;
 
     public ApplicationDbContext(
         DbContextOptions<ApplicationDbContext> options,
-        IDateTimeService dateTimeService) :
+        IDateTimeService dateTimeService,
+        ICurrentUserService currentUserService) :
         base(options)
     {
         _dateTimeService = dateTimeService;
+        _currentUserService = currentUserService;
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -51,10 +54,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
             {
                 case EntityState.Added:
                     entry.Entity.CreatedAt = _dateTimeService.Now;
+                    entry.Entity.CreatedBy = _currentUserService.UserId ?? "";
                     break;
 
                 case EntityState.Modified:
                     entry.Entity.LastUpdatedAt = _dateTimeService.Now;
+                    entry.Entity.LastUpdatedBy = _currentUserService.UserId ?? "";
                     break;
             }
         }
