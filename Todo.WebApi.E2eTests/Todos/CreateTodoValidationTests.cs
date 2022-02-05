@@ -13,8 +13,8 @@ public class CreateTodoValidationTests : TestBase
     [OneTimeSetUp]
     public new async Task Initialize()
     {
-        await _factory.CreateAspNetUser("test@mailinator.com", "Sitekit123!");
-        _httpClient = await _factory.CreateHttpClientAuthenticatedAsUser("test@mailinator.com", "Sitekit123!");
+        await Factory.CreateAspNetUser("test@mailinator.com", "Sitekit123!");
+        _httpClient = await Factory.CreateHttpClientAuthenticatedAsUser("test@mailinator.com", "Sitekit123!");
     }
 
     [Test]

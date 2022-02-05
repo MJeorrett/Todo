@@ -11,7 +11,7 @@ public class CreateTodoTests : TestBase
     [Test]
     public async Task ShouldReturn401WhenUserNotAuthenticated()
     {
-        var httpClient = _factory.CreateClient();
+        var httpClient = Factory.CreateClient();
 
         var response = await httpClient.CreateTodo(new
         {
@@ -24,8 +24,8 @@ public class CreateTodoTests : TestBase
     [Test]
     public async Task ShouldPopulateAllPropertiesWhenRequestIsValid()
     {
-        await _factory.CreateAspNetUser("test@mailinator.com", "Sitekit123!");
-        var httpClient = await _factory.CreateHttpClientAuthenticatedAsUser("test@mailinator.com", "Sitekit123!");
+        await Factory.CreateAspNetUser("test@mailinator.com", "Sitekit123!");
+        var httpClient = await Factory.CreateHttpClientAuthenticatedAsUser("test@mailinator.com", "Sitekit123!");
 
         var createResponse = await httpClient.CreateTodo(new
         {
@@ -45,7 +45,7 @@ public class CreateTodoTests : TestBase
         Assert.NotNull(createdTodo);
         Assert.AreEqual(todoId, createdTodo!.Id);
         Assert.AreEqual("Clean bike", createdTodo!.Title);
-        Assert.AreEqual(_factory.MockedNow.ToDateTimeUtc(), createdTodo!.CreatedAt);
+        Assert.AreEqual(Factory.MockedNow.ToDateTimeUtc(), createdTodo!.CreatedAt);
         Assert.Null(createdTodo!.LastUpdatedAt);
     }
 }

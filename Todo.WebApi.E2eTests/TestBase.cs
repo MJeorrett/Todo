@@ -11,17 +11,17 @@ namespace Todo.WebApi.E2eTests;
 
 public class TestBase
 {
-    protected CustomWebApplicationFactory _factory = null!;
+    protected CustomWebApplicationFactory Factory = null!;
 
     [OneTimeSetUp]
     public async Task Initialize()
     {
-        _factory = new CustomWebApplicationFactory();
+        Factory = new CustomWebApplicationFactory();
 
-        var services = _factory.Services.CreateScope().ServiceProvider;
+        var services = Factory.Services.CreateScope().ServiceProvider;
         EnsureDatabasesCreatedAndMigrated(services);
 
-        await _factory.ResetState();
+        await Factory.ResetState();
     }
 
     private static void EnsureDatabasesCreatedAndMigrated(IServiceProvider services)

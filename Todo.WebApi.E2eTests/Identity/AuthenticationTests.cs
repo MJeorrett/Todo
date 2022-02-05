@@ -16,7 +16,7 @@ public class AuthenticationTests : TestBase
     [Test]
     public async Task ShouldBeAbleToLogInWithPkceFlow()
     {
-        var httpClient = _factory.CreateClient();
+        var httpClient = Factory.CreateClient();
 
         const string clientId = "e2e-test-client";
         const string redirectUri = "http://localhost:3123";
@@ -25,12 +25,12 @@ public class AuthenticationTests : TestBase
         var codeChallenge = "F0j7nFUUJXTZyuxEHqzaRzFUfuyPymA2Rt-LsJqO_YQ";
         const string codeVerifier = "ji3CfZGexmk8swkMdwyI2oq5iZ5FLeNWNZKUscOi6NDzLTiQUeOL90nOf_mE2-_Wqj8zkRKKDOuNxkEHcuy7MQ";
 
-        await _factory.CreatePkceClientApplication(clientId, scope, redirectUri);
+        await Factory.CreatePkceClientApplication(clientId, scope, redirectUri);
 
         const string userEmail = "test-user@mailinator.com";
         const string userPassword = "Sitekit123!";
 
-        await _factory.CreateAspNetUser(userEmail, userPassword);
+        await Factory.CreateAspNetUser(userEmail, userPassword);
 
         var getLoginPageResponse = await httpClient.GetLoginPage(clientId, redirectUri, codeChallenge);
 
