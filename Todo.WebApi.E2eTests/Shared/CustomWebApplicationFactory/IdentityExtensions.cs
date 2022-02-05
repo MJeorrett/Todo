@@ -10,10 +10,11 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Web;
 using Todo.Infrastructure.Identity;
-using Todo.WebApi.E2eTests.Dtos.Identity;
-using Todo.WebApi.E2eTests.Endpoints;
+using Todo.WebApi.E2eTests.Shared.Dtos.Identity;
+using Todo.WebApi.E2eTests.Shared.Endpoints;
+using Todo.WebApi.E2eTests.Shared.Models;
 
-namespace Todo.WebApi.E2eTests.WebApplicationFactory;
+namespace Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
 
 public static class IdentityExtensions
 {
@@ -69,18 +70,16 @@ public static class IdentityExtensions
 
     public static async Task<HttpClient> CreateHttpClientAuthenticatedAsUser(
         this CustomWebApplicationFactory factory,
+        ClientApplicationDetails clientApplication,
         string userName,
         string password)
     {
-        const string clientId = "e2e-test-client";
-        const string redirectUri = "http://localhost:3123";
-        const string scope = "api";
+        var clientId = clientApplication.ClientId;
+        var scope = clientApplication.Scope;
+        var redirectUri = clientApplication.RedirectUri;
 
         var codeChallenge = "F0j7nFUUJXTZyuxEHqzaRzFUfuyPymA2Rt-LsJqO_YQ";
         const string codeVerifier = "ji3CfZGexmk8swkMdwyI2oq5iZ5FLeNWNZKUscOi6NDzLTiQUeOL90nOf_mE2-_Wqj8zkRKKDOuNxkEHcuy7MQ";
-
-        await factory.CreatePkceClientApplication(clientId, scope, redirectUri);
-
 
         var httpClient = factory.CreateClient();
         var getLoginPageResponse = await httpClient.GetLoginPage(clientId, redirectUri, codeChallenge);
@@ -120,15 +119,5 @@ public static class IdentityExtensions
         var antiforgeryTokenInput = loginPageHtmlDocument.DocumentNode.SelectSingleNode("//input[@name='__RequestVerificationToken']");
         var antiforgeryToken = antiforgeryTokenInput.GetAttributeValue("value", "");
         return antiforgeryToken;
-    }
-
-    public static async Task<HttpClient> CreateUserAndAuthenticatedHttpClient(
-        this CustomWebApplicationFactory factory,
-        string email,
-        string password)
-    {
-        await factory.CreateAspNetUser(email, password);
-
-        return await factory.CreateHttpClientAuthenticatedAsUser(email, password);
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Todo.WebApi.E2eTests.Dtos.Identity;
+﻿namespace Todo.WebApi.E2eTests.Shared.Dtos.Identity;
 
 public record GetTokenResponse
 {

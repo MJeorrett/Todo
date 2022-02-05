@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace Todo.WebApi.E2eTests.Endpoints;
+namespace Todo.WebApi.E2eTests.Shared.Endpoints;
 
 public static class Authorization
 {

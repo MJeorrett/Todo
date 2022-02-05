@@ -1,8 +1,9 @@
 ﻿using NUnit.Framework;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Todo.WebApi.E2eTests.Endpoints;
-using Todo.WebApi.E2eTests.WebApplicationFactory;
+using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
+using Todo.WebApi.E2eTests.Shared.Endpoints;
+using Todo.WebApi.E2eTests.Shared.Extensions;
 
 namespace Todo.WebApi.E2eTests.Todos;
 
@@ -13,7 +14,7 @@ public class CreateTodoValidationTests : TestBase
     [OneTimeSetUp]
     public new async Task Initialize()
     {
-        _httpClient = await Factory.CreateUserAndAuthenticatedHttpClient("test@mailinator.com", "Sitekit123!");
+        _httpClient = await CreateUserAndAuthenticatedHttpClient("test@mailinator.com", "Sitekit123!");
     }
 
     [Test]

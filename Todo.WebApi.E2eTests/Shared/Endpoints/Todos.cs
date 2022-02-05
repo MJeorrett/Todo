@@ -2,7 +2,7 @@
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-namespace Todo.WebApi.E2eTests.Endpoints;
+namespace Todo.WebApi.E2eTests.Shared.Endpoints;
 
 public static class Todos
 {

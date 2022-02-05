@@ -5,9 +5,9 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Web;
-using Todo.WebApi.E2eTests.Dtos.Identity;
-using Todo.WebApi.E2eTests.Endpoints;
-using Todo.WebApi.E2eTests.WebApplicationFactory;
+using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
+using Todo.WebApi.E2eTests.Shared.Dtos.Identity;
+using Todo.WebApi.E2eTests.Shared.Endpoints;
 
 namespace Todo.WebApi.E2eTests.Identity;
 

@@ -1,8 +1,9 @@
 ﻿using NUnit.Framework;
 using System.Threading.Tasks;
 using Todo.Application.Todos;
-using Todo.WebApi.E2eTests.Endpoints;
-using Todo.WebApi.E2eTests.WebApplicationFactory;
+using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
+using Todo.WebApi.E2eTests.Shared.Endpoints;
+using Todo.WebApi.E2eTests.Shared.Extensions;
 
 namespace Todo.WebApi.E2eTests.Todos;
 
@@ -11,7 +12,7 @@ public class GetTodoByIdTests : TestBase
     [Test]
     public async Task ShouldReturn401WhenCallerNotAuthenticated()
     {
-        var authenticatedHttpClient = await Factory.CreateUserAndAuthenticatedHttpClient("test@mailinator.com", "Sitekit123!");
+        var authenticatedHttpClient = await CreateUserAndAuthenticatedHttpClient("test@mailinator.com", "Sitekit123!");
 
         var createTodoResponse = await authenticatedHttpClient.CreateTodo(new
         {
@@ -29,7 +30,7 @@ public class GetTodoByIdTests : TestBase
     [Test]
     public async Task ShouldReturn404WhenTodoNotFound()
     {
-        var httpClient = await Factory.CreateUserAndAuthenticatedHttpClient("test@mailinator.com", "Sitekit123!");
+        var httpClient = await CreateUserAndAuthenticatedHttpClient("test@mailinator.com", "Sitekit123!");
 
         var createTodoResponse = await httpClient.CreateTodo(new
         {
@@ -46,7 +47,7 @@ public class GetTodoByIdTests : TestBase
     [Test]
     public async Task ShouldPopulateAllProperties()
     {
-        var httpClient = await Factory.CreateUserAndAuthenticatedHttpClient("test@mailinator.com", "Sitekit123!");
+        var httpClient = await CreateUserAndAuthenticatedHttpClient("test@mailinator.com", "Sitekit123!");
 
         var createResponse = await httpClient.CreateTodo(new
         {
