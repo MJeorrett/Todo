@@ -26,6 +26,7 @@ An approach to ensuring CreatedAt, CreatedBy, LastUpdatedAt and LastUpdatedBy pr
 ## TODO
 - :heavy_check_mark: HttpClient extensions in e2e tests.
 - user management (super admin)
+- Fix todo test suites not runing on their own.
 
 ## References
 - Clean Architecture & CQRS - https://github.com/jasontaylordev/CleanArchitecture

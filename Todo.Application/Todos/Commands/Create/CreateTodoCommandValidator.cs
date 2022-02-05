@@ -6,8 +6,6 @@ public class CreateTodoCommandValidator : AbstractValidator<CreateTodoCommand>
 {
     public CreateTodoCommandValidator()
     {
-        RuleFor(_ => _.Title)
-            .NotEmpty()
-            .MaximumLength(256);
+        RuleFor(_ => _.Title).TodoTitleRules();
     }
 }

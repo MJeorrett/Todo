@@ -7,7 +7,7 @@ namespace Todo.WebApi.E2eTests.Shared.Endpoints;
 
 public static class Authorization
 {
-    public static async Task<HttpResponseMessage> GetLoginPage(
+    public static async Task<HttpResponseMessage> CallGetLoginPage(
         this HttpClient httpClient,
         string clientId,
         string redirectUri,
@@ -23,7 +23,7 @@ public static class Authorization
         return await httpClient.GetAsync(uri);
     }
 
-    public static async Task<HttpResponseMessage> PostLogin(
+    public static async Task<HttpResponseMessage> CallPostLogin(
         this HttpClient httpClient,
         string clientId,
         string scope,

@@ -90,12 +90,12 @@ public static class IdentityExtensions
         const string codeVerifier = "ji3CfZGexmk8swkMdwyI2oq5iZ5FLeNWNZKUscOi6NDzLTiQUeOL90nOf_mE2-_Wqj8zkRKKDOuNxkEHcuy7MQ";
 
         var httpClient = factory.CreateClient();
-        var getLoginPageResponse = await httpClient.GetLoginPage(clientId, redirectUri, codeChallenge);
+        var getLoginPageResponse = await httpClient.CallGetLoginPage(clientId, redirectUri, codeChallenge);
 
         await getLoginPageResponse.AssertIsStatusCode(200);
         string antiforgeryToken = await ParseAntiforgeryTokenFromLoginPage(getLoginPageResponse);
 
-        var postLoginResponse = await httpClient.PostLogin(
+        var postLoginResponse = await httpClient.CallPostLogin(
             clientId, scope, redirectUri, codeChallenge, userName, password, antiforgeryToken);
 
         await postLoginResponse.AssertIsStatusCode(200);

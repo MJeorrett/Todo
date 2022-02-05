@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Todo.Application.Todos;
 using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
@@ -21,7 +20,7 @@ public class TodoE2eTests : TestBase
             title = "Clean bike",
         });
 
-        var getByIdResponse = await httpClient.GetTodoById(todoId);
+        var getByIdResponse = await httpClient.CallGetTodoById(todoId);
 
         await getByIdResponse.AssertIsStatusCode(200);
 
@@ -34,15 +33,5 @@ public class TodoE2eTests : TestBase
         Assert.AreEqual(userId, createdTodo.CreatedBy);
         Assert.Null(createdTodo!.LastUpdatedAt);
         Assert.IsEmpty(createdTodo.LastUpdatedBy);
-    }
-
-    private static async Task<int> CreateTodo(HttpClient httpClient, object createTodoRequest)
-    {
-        var createResponse = await httpClient.CreateTodo(createTodoRequest);
-
-        await createResponse.AssertIsStatusCode(201);
-
-        var todoId = await createResponse.ReadResponseContentAs<int>();
-        return todoId;
     }
 }

@@ -32,12 +32,12 @@ public class AuthenticationTests : TestBase
 
         await Factory.CreateAspNetUser(userEmail, userPassword);
 
-        var getLoginPageResponse = await httpClient.GetLoginPage(clientId, redirectUri, codeChallenge);
+        var getLoginPageResponse = await httpClient.CallGetLoginPage(clientId, redirectUri, codeChallenge);
 
         getLoginPageResponse.EnsureSuccessStatusCode();
         string antiforgeryToken = await ParseAntiforgeryTokenFromLoginPage(getLoginPageResponse);
 
-        var postLoginResponse = await httpClient.PostLogin(
+        var postLoginResponse = await httpClient.CallPostLogin(
             clientId, scope, redirectUri, codeChallenge, userEmail, userPassword, antiforgeryToken);
 
         postLoginResponse.EnsureSuccessStatusCode();

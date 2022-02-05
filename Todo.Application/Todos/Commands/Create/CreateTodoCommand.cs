@@ -23,13 +23,13 @@ public class CreateTodoCommandHandler : IRequestHandler<CreateTodoCommand, int>
         _dbContext = dbContext;
     }
 
-    public async Task<AppResponse<int>> Handle(CreateTodoCommand request, CancellationToken cancellationToken)
+    public async Task<AppResponse<int>> Handle(CreateTodoCommand command, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Creating todo {todoTitle}.", request.Title);
+        _logger.LogInformation("Creating todo {todoTitle}.", command.Title);
 
         var todoEntity = new TodoEntity()
         {
-            Title = request.Title,
+            Title = command.Title,
         };
 
         _dbContext.Todos.Add(todoEntity);

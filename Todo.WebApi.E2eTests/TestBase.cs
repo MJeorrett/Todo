@@ -5,8 +5,11 @@ using NUnit.Framework;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Todo.Application.Todos;
 using Todo.Infrastructure.Persistence;
 using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
+using Todo.WebApi.E2eTests.Shared.Endpoints;
+using Todo.WebApi.E2eTests.Shared.Extensions;
 using Todo.WebApi.E2eTests.Shared.Models;
 
 namespace Todo.WebApi.E2eTests;
@@ -72,5 +75,25 @@ public class TestBase
             _testClientApplicationDetails.ClientId,
             _testClientApplicationDetails.Scope,
             _testClientApplicationDetails.RedirectUri);
+    }
+
+    public static async Task<int> CreateTodo(HttpClient httpClient, object createTodoRequest)
+    {
+        var response = await httpClient.CallCreateTodo(createTodoRequest);
+
+        await response.AssertIsStatusCode(201);
+
+        var todoId = await response.ReadResponseContentAs<int>();
+        return todoId;
+    }
+
+    public static async Task<TodoDetailsDto> GetTodoById(HttpClient httpClient, int todoId)
+    {
+        var response = await httpClient.CallGetTodoById(todoId);
+
+        await response.AssertIsStatusCode(200);
+
+        var todo = await response.ReadResponseContentAs<TodoDetailsDto>();
+        return todo;
     }
 }

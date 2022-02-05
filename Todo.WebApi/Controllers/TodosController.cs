@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Todo.Application.Common.AppRequests;
 using Todo.Application.Todos;
 using Todo.Application.Todos.Commands.Create;
+using Todo.Application.Todos.Commands.Update;
 using Todo.Application.Todos.Queries.GetById;
 using Todo.WebApi.Extensions;
 
@@ -32,6 +33,16 @@ public class TodosController : ControllerBase
         var query = new GetTodoByIdQuery() { TodoId = todoId };
 
         var response = await handler.Handle(query, cancellationToken);
+        return response.ToActionResult();
+    }
+
+    [HttpPut("api/todos")]
+    public async Task<ActionResult<AppResponse>> UpdateTodo(
+           [FromServices] UpdateTodoCommandHandler handler,
+           [FromBody] UpdateTodoCommand command,
+           CancellationToken cancellationToken)
+    {
+        var response = await handler.Handle(command, cancellationToken);
         return response.ToActionResult();
     }
 }

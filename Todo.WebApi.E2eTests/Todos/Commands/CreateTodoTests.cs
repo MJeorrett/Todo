@@ -12,7 +12,7 @@ public class CreateTodoTests : TestBase
     {
         var httpClient = Factory.CreateClient();
 
-        var response = await httpClient.CreateTodo(new
+        var response = await httpClient.CallCreateTodo(new
         {
             title = "Learn to code",
         });

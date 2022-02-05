@@ -15,6 +15,11 @@ public static class DependencyInjection
                 .AddClasses(classes => classes.AssignableTo(typeof(IRequestHandler<,>)))
                 .AsSelf()
                 .WithScopedLifetime();
+
+            scan.FromAssemblyOf<CreateTodoCommandHandler>()
+                .AddClasses(classes => classes.AssignableTo(typeof(IRequestHandler<>)))
+                .AsSelf()
+                .WithScopedLifetime();
         });
 
         return services;
