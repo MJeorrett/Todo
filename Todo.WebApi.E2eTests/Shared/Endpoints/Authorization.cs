@@ -35,7 +35,7 @@ public static class Authorization
     {
         var returnUrl = $"/connect/authorize?" +
             $"client_id={clientId}&" +
-            $"scope={scope}%20openid%20offline_access&" +
+            $"scope={scope}&" +
             $"response_type=code&" +
             $"redirect_uri={HttpUtility.UrlEncode(redirectUri)}&" +
             $"code_challenge={codeChallenge}&" +

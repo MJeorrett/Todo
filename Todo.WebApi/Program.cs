@@ -12,10 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var configuration = builder.Configuration;
 
-services.AddInfrastructure(builder.Configuration, builder.Environment.EnvironmentName);
+services.AddInfrastructure(builder.Configuration, builder.Environment);
 services.AddApplication();
-
-services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 services.AddControllersWithViews()
     .AddApplicationFluentValidation();
@@ -63,7 +61,7 @@ services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-services.AddHostedService<TestDataSeeder>();
+services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 var app = builder.Build();
 

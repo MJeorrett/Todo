@@ -12,6 +12,7 @@ using System.Web;
 using Todo.Infrastructure.Identity;
 using Todo.WebApi.E2eTests.Shared.Dtos.Identity;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
+using Todo.WebApi.E2eTests.Shared.Extensions;
 using Todo.WebApi.E2eTests.Shared.Models;
 
 namespace Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
@@ -91,13 +92,13 @@ public static class IdentityExtensions
         var httpClient = factory.CreateClient();
         var getLoginPageResponse = await httpClient.GetLoginPage(clientId, redirectUri, codeChallenge);
 
-        getLoginPageResponse.EnsureSuccessStatusCode();
+        await getLoginPageResponse.AssertIsStatusCode(200);
         string antiforgeryToken = await ParseAntiforgeryTokenFromLoginPage(getLoginPageResponse);
 
         var postLoginResponse = await httpClient.PostLogin(
             clientId, scope, redirectUri, codeChallenge, userName, password, antiforgeryToken);
 
-        postLoginResponse.EnsureSuccessStatusCode();
+        await postLoginResponse.AssertIsStatusCode(200);
 
         var postLoginResponseQuery = HttpUtility.ParseQueryString(postLoginResponse.RequestMessage!.RequestUri!.Query);
         var code = postLoginResponseQuery[0];
@@ -107,7 +108,7 @@ public static class IdentityExtensions
         var getTokenResponse = await httpClient.PostToken(
             clientId, redirectUri, code!, codeVerifier);
 
-        getTokenResponse.EnsureSuccessStatusCode();
+        await getTokenResponse.AssertIsStatusCode(200);
 
         var getTokenResponseBody = await getTokenResponse.Content.ReadFromJsonAsync<GetTokenResponse>();
 

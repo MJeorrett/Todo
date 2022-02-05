@@ -54,12 +54,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
             {
                 case EntityState.Added:
                     entry.Entity.CreatedAt = _dateTimeService.Now;
-                    entry.Entity.CreatedBy = _currentUserService.UserId ?? "";
+                    entry.Entity.CreatedBy = _currentUserService.GetUserId() ?? "";
                     break;
 
                 case EntityState.Modified:
                     entry.Entity.LastUpdatedAt = _dateTimeService.Now;
-                    entry.Entity.LastUpdatedBy = _currentUserService.UserId ?? "";
+                    entry.Entity.LastUpdatedBy = _currentUserService.GetUserId() ?? "";
                     break;
             }
         }

@@ -42,7 +42,9 @@ public class GetTodoByIdQueryHandler : IRequestHandler<GetTodoByIdQuery, TodoDet
             Id = todoEntity.Id,
             Title = todoEntity.Title,
             CreatedAt = todoEntity.CreatedAt.ToDateTimeUtc(),
+            CreatedBy = todoEntity.CreatedBy,
             LastUpdatedAt = todoEntity.LastUpdatedAt?.ToDateTimeUtc(),
+            LastUpdatedBy = todoEntity.LastUpdatedBy,
         });
     }
 }

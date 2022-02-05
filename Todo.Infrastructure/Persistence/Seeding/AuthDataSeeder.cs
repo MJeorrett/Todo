@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using OpenIddict.Abstractions;
 using Todo.Infrastructure.Identity;
-using Todo.Infrastructure.Persistence;
 
-namespace Todo.WebApi;
+namespace Todo.Infrastructure.Persistence.Seeding;
 
-public class TestDataSeeder : IHostedService
+public class AuthDataSeeder : IHostedService
 {
     private readonly IServiceProvider _serviceProvider;
 
-    public TestDataSeeder(IServiceProvider serviceProvider)
+    public AuthDataSeeder(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }
@@ -20,10 +21,16 @@ public class TestDataSeeder : IHostedService
 
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         await dbContext.Database.EnsureCreatedAsync(cancellationToken);
-        await EnsureApplicationSeeded(scope, cancellationToken);
+
+        await EnsureDefaultUserCreated(scope);
+        await EnsureDefaultClientApplicationSeeded(scope, cancellationToken);
+    }
+
+    private static async Task EnsureDefaultUserCreated(IServiceScope scope)
+    {
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-        const string email = "mjeorrett@mailinator.com";
+        const string email = "default-dev@mailinator.com";
         var existingUser = await userManager.FindByEmailAsync(email);
 
         if (existingUser is null)
@@ -38,21 +45,24 @@ public class TestDataSeeder : IHostedService
         }
     }
 
-    private static async Task EnsureApplicationSeeded(IServiceScope scope, CancellationToken cancellationToken)
+    private static async Task EnsureDefaultClientApplicationSeeded(IServiceScope scope, CancellationToken cancellationToken)
     {
         var openIddictManager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
 
-        var existingClient = await openIddictManager.FindByClientIdAsync("postman", cancellationToken);
+        const string clientId = "default-dev";
+        const string redirectUri = "https://oauth.pstmn.io/v1/callback";
+
+        var existingClient = await openIddictManager.FindByClientIdAsync(clientId, cancellationToken);
 
         if (existingClient is null)
         {
             await openIddictManager.CreateAsync(new OpenIddictApplicationDescriptor
             {
-                ClientId = "postman",
-                ClientSecret = "postman-secret",
-                DisplayName = "Postman",
-                RedirectUris = { new Uri("http://localhost:3000") },
-                PostLogoutRedirectUris = { new Uri("http://localhost:3000") },
+                ClientId = clientId,
+                ClientSecret = "default-dev-secret",
+                DisplayName = "Default Dev",
+                RedirectUris = { new Uri(redirectUri) },
+                PostLogoutRedirectUris = { new Uri(redirectUri) },
                 Permissions =
                 {
                     OpenIddictConstants.Permissions.Endpoints.Authorization,

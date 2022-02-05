@@ -1,23 +1,34 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using Todo.Application.Common.Interfaces;
 using Todo.Infrastructure.DateTimes;
 using Todo.Infrastructure.Identity;
 using Todo.Infrastructure.Persistence;
+using Todo.Infrastructure.Persistence.Seeding;
 
 namespace Todo.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration, string environmentName)
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        IWebHostEnvironment environment)
     {
         services.AddDateTimes();
-        services.AddIdentity(configuration, environmentName);
+        services.AddIdentity(configuration, environment.EnvironmentName);
         services.AddPersistence(configuration);
+
+        if (environment.IsDevelopment())
+        {
+            services.AddSeeders();
+        }
 
         return services;
     }
@@ -98,5 +109,10 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+    }
+
+    private static void AddSeeders(this IServiceCollection services)
+    {
+        services.AddHostedService<AuthDataSeeder>();
     }
 }

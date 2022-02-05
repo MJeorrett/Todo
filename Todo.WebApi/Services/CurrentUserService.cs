@@ -1,30 +1,38 @@
-﻿using OpenIddict.Abstractions;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Todo.Application.Common.Interfaces;
 
 namespace Todo.WebApi.Services;
 
 public class CurrentUserService : ICurrentUserService
 {
-    public string? UserId { get; private set; }
+    private readonly ILogger _logger;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public CurrentUserService(
         ILogger<CurrentUserService> logger,
         IHttpContextAccessor httpContextAccessor)
     {
-        if (httpContextAccessor.HttpContext is null)
+        _logger = logger;
+        _httpContextAccessor = httpContextAccessor;
+    }
+
+    public string? GetUserId()
+    {
+        if (_httpContextAccessor.HttpContext is null)
         {
-            logger.LogWarning("No http context so can't resolve current user id, it will be null.");
-            return;
+            _logger.LogInformation("No http context so can't resolve current user id, it will be null.");
+            return null;
         }
 
-        UserId = httpContextAccessor.HttpContext?.User?.FindFirstValue(OpenIddictConstants.Claims.Subject);
+        var userId = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        if (string.IsNullOrEmpty(UserId))
+        if (string.IsNullOrEmpty(userId))
         {
-            logger.LogInformation("Failed to resolve user id from http context.");
+            _logger.LogInformation("Failed to resolve user id from http context.");
+            return "";
         }
 
-        logger.LogInformation("Successfully retrieved current user from http context.");
+        _logger.LogInformation("Successfully retrieved current user from http context.");
+        return userId;
     }
 }
