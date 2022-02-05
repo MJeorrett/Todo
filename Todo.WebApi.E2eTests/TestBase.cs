@@ -14,13 +14,17 @@ public class TestBase
     protected CustomWebApplicationFactory Factory = null!;
 
     [OneTimeSetUp]
-    public async Task Initialize()
+    public void Initialize()
     {
         Factory = new CustomWebApplicationFactory();
 
         var services = Factory.Services.CreateScope().ServiceProvider;
         EnsureDatabasesCreatedAndMigrated(services);
+    }
 
+    [SetUp]
+    public async Task ResetState()
+    {
         await Factory.ResetState();
     }
 

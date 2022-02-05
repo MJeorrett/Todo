@@ -121,4 +121,14 @@ public static class IdentityExtensions
         var antiforgeryToken = antiforgeryTokenInput.GetAttributeValue("value", "");
         return antiforgeryToken;
     }
+
+    public static async Task<HttpClient> CreateUserAndAuthenticatedHttpClient(
+        this CustomWebApplicationFactory factory,
+        string email,
+        string password)
+    {
+        await factory.CreateAspNetUser(email, password);
+
+        return await factory.CreateHttpClientAuthenticatedAsUser(email, password);
+    }
 }
