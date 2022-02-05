@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using Todo.Application.Common.Interfaces;
 using Todo.Infrastructure.DateTimes;
+using Todo.Infrastructure.Extensions;
 using Todo.Infrastructure.Identity;
 using Todo.Infrastructure.Persistence;
 using Todo.Infrastructure.Persistence.Seeding;
@@ -68,11 +69,7 @@ public static class DependencyInjection
                 options.SetTokenEndpointUris("/connect/token");
                 options.SetLogoutEndpointUris("/connect/logout");
 
-                var base64SigningKey = configuration["Identity:Base64SigningKey"];
-                var signingKeyBytes = Convert.FromBase64String(configuration["Identity:Base64SigningKey"]);
-                var signingKeyRsa = RSA.Create();
-                signingKeyRsa.ImportPkcs8PrivateKey(signingKeyBytes, out var _);
-                var signingKey = new RsaSecurityKey(signingKeyRsa);
+                var signingKey = configuration["Identity:Base64SigningKey"].ParseAsPkcs8PrivateKey();
 
                 options.AddSigningKey(signingKey);
                 options.AddEphemeralEncryptionKey();
