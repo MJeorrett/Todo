@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Todo.Application.Common.AppRequests;
 using Todo.Application.Todos;
 using Todo.Application.Todos.Commands.Create;
@@ -8,6 +10,7 @@ using Todo.WebApi.Extensions;
 namespace Todo.WebApi.Controllers;
 
 [ApiController]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 public class TodosController : ControllerBase
 {
     [HttpPost("api/todos")]

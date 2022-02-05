@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography;
 using Todo.Application.Common.Interfaces;
 using Todo.Infrastructure.DateTimes;
 using Todo.Infrastructure.Identity;
@@ -14,7 +16,7 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration, string environmentName)
     {
         services.AddDateTimes();
-        services.AddIdentity(environmentName);
+        services.AddIdentity(configuration, environmentName);
         services.AddPersistence(configuration);
 
         return services;
@@ -25,7 +27,10 @@ public static class DependencyInjection
         services.AddScoped<IDateTimeService, DateTimeService>();
     }
 
-    private static void AddIdentity(this IServiceCollection services, string environmentName)
+    private static void AddIdentity(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        string environmentName)
     {
         services.AddIdentity<ApplicationUser, IdentityRole>(options =>
         {
@@ -52,8 +57,15 @@ public static class DependencyInjection
                 options.SetTokenEndpointUris("/connect/token");
                 options.SetLogoutEndpointUris("/connect/logout");
 
+                var base64SigningKey = configuration["Identity:Base64SigningKey"];
+                var signingKeyBytes = Convert.FromBase64String(configuration["Identity:Base64SigningKey"]);
+                var signingKeyRsa = RSA.Create();
+                signingKeyRsa.ImportPkcs8PrivateKey(signingKeyBytes, out var _);
+                var signingKey = new RsaSecurityKey(signingKeyRsa);
+
+                options.AddSigningKey(signingKey);
                 options.AddEphemeralEncryptionKey();
-                options.AddEphemeralSigningKey();
+
                 options.DisableAccessTokenEncryption();
 
                 options.RegisterScopes("api");

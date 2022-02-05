@@ -1,17 +1,26 @@
 ﻿using NUnit.Framework;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Todo.WebApi.E2eTests.Endpoints;
+using Todo.WebApi.E2eTests.WebApplicationFactory;
 
 namespace Todo.WebApi.E2eTests.Todos;
 
 public class CreateTodoValidationTests : TestBase
 {
+    private HttpClient _httpClient = null!;
+
+    [OneTimeSetUp]
+    public new async Task Initialize()
+    {
+        await _factory.CreateAspNetUser("test@mailinator.com", "Sitekit123!");
+        _httpClient = await _factory.CreateHttpClientAuthenticatedAsUser("test@mailinator.com", "Sitekit123!");
+    }
+
     [Test]
     public async Task ShouldReturn400WhenNoTitleProvied()
     {
-        var httpClient = _factory.CreateClient();
-
-        var actualResult = await httpClient.CreateTodo(new { });
+        var actualResult = await _httpClient.CreateTodo(new { });
 
         await actualResult.AssertIs400WithErrorForField("Title");
     }
@@ -19,9 +28,7 @@ public class CreateTodoValidationTests : TestBase
     [Test]
     public async Task ShouldReturn400WhenTitleIsEmptyString()
     {
-        var httpClient = _factory.CreateClient();
-
-        var actualResult = await httpClient.CreateTodo(new
+        var actualResult = await _httpClient.CreateTodo(new
         {
             title = "",
         });
@@ -32,9 +39,7 @@ public class CreateTodoValidationTests : TestBase
     [Test]
     public async Task ShouldReturn400WhenTitleIsToLong()
     {
-        var httpClient = _factory.CreateClient();
-
-        var actualResult = await httpClient.CreateTodo(new
+        var actualResult = await _httpClient.CreateTodo(new
         {
             title = new string('a', 257),
         });
@@ -45,9 +50,7 @@ public class CreateTodoValidationTests : TestBase
     [Test]
     public async Task ShouldReturn200WhenAllOk()
     {
-        var httpClient = _factory.CreateClient();
-
-        var actualResult = await httpClient.CreateTodo(new
+        var actualResult = await _httpClient.CreateTodo(new
         {
             title = new string('a', 256),
         });
