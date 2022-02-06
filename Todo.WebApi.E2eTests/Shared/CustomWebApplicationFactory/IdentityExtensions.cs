@@ -1,7 +1,6 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
 using OpenIddict.Abstractions;
 using System;
 using System.Net.Http;
@@ -14,6 +13,7 @@ using Todo.WebApi.E2eTests.Shared.Dtos.Identity;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
 using Todo.WebApi.E2eTests.Shared.Extensions;
 using Todo.WebApi.E2eTests.Shared.Models;
+using Xunit;
 
 namespace Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
 
@@ -103,7 +103,7 @@ public static class IdentityExtensions
         var postLoginResponseQuery = HttpUtility.ParseQueryString(postLoginResponse.RequestMessage!.RequestUri!.Query);
         var code = postLoginResponseQuery[0];
 
-        Assert.IsNotEmpty(code, "Expected code to not be empty.");
+        Assert.NotEmpty(code);
 
         var getTokenResponse = await httpClient.PostToken(
             clientId, redirectUri, code!, codeVerifier);
@@ -112,7 +112,7 @@ public static class IdentityExtensions
 
         var getTokenResponseBody = await getTokenResponse.Content.ReadFromJsonAsync<GetTokenResponse>();
 
-        Assert.IsNotEmpty(getTokenResponseBody?.access_token, "Expected get token response body to contain access token.");
+        Assert.NotEmpty(getTokenResponseBody?.access_token);
 
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", getTokenResponseBody?.access_token);
 

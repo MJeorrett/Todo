@@ -1,32 +1,35 @@
-﻿using NUnit.Framework;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
 using Todo.WebApi.E2eTests.Shared.Extensions;
+using Xunit;
 
 namespace Todo.WebApi.E2eTests.Todos.Commands;
 
-public class UpdateTodoValidationTests : TestBase
+[Collection("waf")]
+public class UpdateTodoValidationTests : TestBase, IAsyncLifetime
 {
     private HttpClient _httpClient = null!;
     private int existingTodoId;
 
-    [OneTimeSetUp]
-    public async Task BeforeAll()
+    public UpdateTodoValidationTests(WebApplicationFixture webApplicationFixture) :
+        base(webApplicationFixture.Factory)
     {
-        _httpClient = await CreateUserAndAuthenticatedHttpClient("test@mailinator.com", "Sitekit123!");
     }
 
-    [SetUp]
-    public async Task BeforeEach()
+    public override async Task InitializeAsync()
     {
+        await base.InitializeAsync();
+
+        _httpClient = await CreateUserAndAuthenticatedHttpClient("test@mailinator.com", "Sitekit123!");
+
         existingTodoId = await CreateTodo(_httpClient, new
         {
             title = "Play pong"
         });
     }
 
-    [Test]
+    [Fact]
     public async Task ShouldReturn404WhenTodoNotFound()
     {
         var response = await _httpClient.CallUpdateTodo(new
@@ -38,7 +41,7 @@ public class UpdateTodoValidationTests : TestBase
         await response.AssertIsStatusCode(404);
     }
 
-    [Test]
+    [Fact]
     public async Task ShouldReturn400WhenNoTitleProvied()
     {
         var actualResult = await _httpClient.CallUpdateTodo(new
@@ -49,7 +52,7 @@ public class UpdateTodoValidationTests : TestBase
         await actualResult.AssertIs400WithErrorForField("Title");
     }
 
-    [Test]
+    [Fact]
     public async Task ShouldReturn400WhenTitleIsEmptyString()
     {
         var actualResult = await _httpClient.CallUpdateTodo(new
@@ -61,7 +64,7 @@ public class UpdateTodoValidationTests : TestBase
         await actualResult.AssertIs400WithErrorForField("Title");
     }
 
-    [Test]
+    [Fact]
     public async Task ShouldReturn400WhenTitleIsToLong()
     {
         var actualResult = await _httpClient.CallUpdateTodo(new
@@ -73,7 +76,7 @@ public class UpdateTodoValidationTests : TestBase
         await actualResult.AssertIs400WithErrorForField("Title");
     }
 
-    [Test]
+    [Fact]
     public async Task ShouldReturn200WhenAllOk()
     {
         var actualResult = await _httpClient.CallUpdateTodo(new

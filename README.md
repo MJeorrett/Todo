@@ -21,12 +21,13 @@ An approach to ensuring CreatedAt, CreatedBy, LastUpdatedAt and LastUpdatedBy pr
 - Openiddict
 - Fluent validation
 - Noda Time
-- NUnit
+- XUnit
 
 ## TODO
 - :heavy_check_mark: HttpClient extensions in e2e tests.
 - user management (super admin)
-- Fix todo test suites not runing on their own.
+- :heavy_check_mark: Fix todo test suites not runing on their own.
+  - Use XUnit instead of NUnit
 
 ## References
 - Clean Architecture & CQRS - https://github.com/jasontaylordev/CleanArchitecture

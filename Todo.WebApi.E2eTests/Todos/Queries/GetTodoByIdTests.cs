@@ -1,22 +1,29 @@
-﻿using NUnit.Framework;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
 using Todo.WebApi.E2eTests.Shared.Extensions;
+using Xunit;
 
 namespace Todo.WebApi.E2eTests.Todos.Queries;
 
-public class GetTodoByIdTests : TestBase
+[Collection("waf")]
+public class GetTodoByIdTests : TestBase, IAsyncLifetime
 {
     private HttpClient _authenticatedHttpClient = null!;
 
-    [SetUp]
-    public async Task BeforeEach()
+    public GetTodoByIdTests(WebApplicationFixture webApplicationFixture) :
+        base(webApplicationFixture.Factory)
     {
+    }
+
+    public override async Task InitializeAsync()
+    {
+        await base.InitializeAsync();
+
         _authenticatedHttpClient = await CreateUserAndAuthenticatedHttpClient("test@mailinator.com", "Sitekit123!");
     }
 
-    [Test]
+    [Fact]
     public async Task ShouldReturn401WhenCallerNotAuthenticated()
     {
         var todoId = await CreateTodo(_authenticatedHttpClient);
@@ -27,7 +34,7 @@ public class GetTodoByIdTests : TestBase
         await response.AssertIsStatusCode(401);
     }
 
-    [Test]
+    [Fact]
     public async Task ShouldReturn404WhenTodoNotFound()
     {
         var todoId = await CreateTodo(_authenticatedHttpClient);

@@ -1,11 +1,11 @@
-﻿using NUnit.Framework;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Todo.Application.Common.AppRequests;
+using Xunit;
 
 namespace Todo.WebApi.E2eTests.Shared.Extensions;
 

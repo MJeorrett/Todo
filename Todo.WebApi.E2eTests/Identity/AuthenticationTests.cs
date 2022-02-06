@@ -1,6 +1,4 @@
 ﻿using HtmlAgilityPack;
-using NUnit.Framework;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -8,12 +6,20 @@ using System.Web;
 using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
 using Todo.WebApi.E2eTests.Shared.Dtos.Identity;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
+using Xunit;
 
 namespace Todo.WebApi.E2eTests.Identity;
 
+[Collection("waf")]
 public class AuthenticationTests : TestBase
 {
-    [Test]
+    public AuthenticationTests(WebApplicationFixture webApplicationFixture) :
+        base(webApplicationFixture.Factory)
+    {
+        
+    }
+
+    [Fact]
     public async Task ShouldBeAbleToLogInWithPkceFlow()
     {
         var httpClient = Factory.CreateClient();
@@ -45,7 +51,7 @@ public class AuthenticationTests : TestBase
         var postLoginResponseQuery = HttpUtility.ParseQueryString(postLoginResponse.RequestMessage!.RequestUri!.Query);
         var code = postLoginResponseQuery[0];
 
-        Assert.IsNotEmpty(code, "Expected code to not be empty.");
+        Assert.NotEmpty(code);
 
         var getTokenResponse = await httpClient.PostToken(
             clientId, redirectUri, code!, codeVerifier);
@@ -54,7 +60,7 @@ public class AuthenticationTests : TestBase
 
         var getTokenResponseBody = await getTokenResponse.Content.ReadFromJsonAsync<GetTokenResponse>();
 
-        Assert.IsNotEmpty(getTokenResponseBody?.access_token, "Expected get token response body to contain access token.");
+        Assert.NotEmpty(getTokenResponseBody?.access_token);
     }
 
     private static async Task<string> ParseAntiforgeryTokenFromLoginPage(HttpResponseMessage getLoginPageResponse)

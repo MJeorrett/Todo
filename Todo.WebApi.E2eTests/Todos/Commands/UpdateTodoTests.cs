@@ -1,15 +1,20 @@
-﻿using NUnit.Framework;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
 using Todo.WebApi.E2eTests.Shared.Extensions;
+using Xunit;
 
 namespace Todo.WebApi.E2eTests.Todos.Commands;
 
+[Collection("waf")]
 public class UpdateTodoTests : TestBase
 {
-    [Test]
+    public UpdateTodoTests(WebApplicationFixture webApplicationFixture) :
+        base(webApplicationFixture.Factory)
+    {
+    }
+
+    [Fact]
     public async Task ShouldReturn401WhenCallerNotAuthenticated()
     {
         var authenticatedHttpClient = await CreateUserAndAuthenticatedHttpClient("test@mailinator.com", "Sitekit123!");
@@ -30,7 +35,7 @@ public class UpdateTodoTests : TestBase
         await response.AssertIsStatusCode(401);
     }
 
-    [Test]
+    [Fact]
     public async Task ShouldUpdateAllFields()
     {
         var userId = await Factory.CreateAspNetUser("test@mailinator.com", "Sitekit123!");
@@ -51,9 +56,9 @@ public class UpdateTodoTests : TestBase
 
         var updatedTodo = await GetTodoById(httpClient, existingTodoId);
 
-        Assert.AreEqual(existingTodoId, updatedTodo.Id);
-        Assert.AreEqual("Starve cat", updatedTodo.Title);
-        Assert.AreEqual(Factory.MockedNow.ToDateTimeUtc(), updatedTodo!.LastUpdatedAt);
-        Assert.AreEqual(userId, updatedTodo.LastUpdatedBy);
+        Assert.Equal(existingTodoId, updatedTodo?.Id);
+        Assert.Equal("Starve cat", updatedTodo?.Title);
+        Assert.Equal(Factory.MockedNow.ToDateTimeUtc(), updatedTodo?.LastUpdatedAt);
+        Assert.Equal(userId, updatedTodo?.LastUpdatedBy);
     }
 }
