@@ -24,10 +24,16 @@ An approach to ensuring CreatedAt, CreatedBy, LastUpdatedAt and LastUpdatedBy pr
 - XUnit
 
 ## TODO
-- :heavy_check_mark: HttpClient extensions in e2e tests.
 - user management (super admin)
+- paginated list todos
+- searching list todos
+- sorting list todos
+- Email sending
+- Embedded image
+- Test data builders
+- :heavy_check_mark: HttpClient extensions in e2e tests.
 - :heavy_check_mark: Fix todo test suites not runing on their own.
-  - Use XUnit instead of NUnit
+	- Use XUnit instead of NUnit
 
 ## References
 - Clean Architecture & CQRS - https://github.com/jasontaylordev/CleanArchitecture
