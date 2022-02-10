@@ -6,6 +6,7 @@ using Todo.Application.Todos;
 using Todo.Application.Todos.Commands.Create;
 using Todo.Application.Todos.Commands.Update;
 using Todo.Application.Todos.Queries.GetById;
+using Todo.Application.Todos.Queries.List;
 using Todo.WebApi.Extensions;
 
 namespace Todo.WebApi.Controllers;
@@ -21,6 +22,16 @@ public class TodosController : ControllerBase
             CancellationToken cancellationToken)
     {
         var response = await handler.Handle(command, cancellationToken);
+        return response.ToActionResult();
+    }
+
+    [HttpGet("api/todos")]
+    public async Task<ActionResult<AppResponse<PaginatedListResponse<TodoDetailsDto>>>> ListTodos(
+           [FromServices] ListTodosQueryHandler handler,
+           [FromQuery] ListTodosQuery query,
+           CancellationToken cancellationToken)
+    {
+        var response = await handler.Handle(query, cancellationToken);
         return response.ToActionResult();
     }
 

@@ -37,14 +37,6 @@ public class GetTodoByIdQueryHandler : IRequestHandler<GetTodoByIdQuery, TodoDet
 
         _logger.LogInformation("Successfully retrieved todo {todoId} by id.", query.TodoId);
 
-        return new(200, new()
-        {
-            Id = todoEntity.Id,
-            Title = todoEntity.Title,
-            CreatedAt = todoEntity.CreatedAt.ToDateTimeUtc(),
-            CreatedBy = todoEntity.CreatedBy,
-            LastUpdatedAt = todoEntity.LastUpdatedAt?.ToDateTimeUtc(),
-            LastUpdatedBy = todoEntity.LastUpdatedBy,
-        });
+        return new(200, TodoDetailsDto.FromEntity(todoEntity));
     }
 }
