@@ -13,18 +13,29 @@ public record PaginatedListResponse<T>(
 
     public bool HasNextPage => PageNumber < TotalPages;
 
-    public static async Task<PaginatedListResponse<T>> CreateAsync(IQueryable<T> source, int pageNumber, int pageSize)
+    public static async Task<PaginatedListResponse<T>> CreateAsync<Tin>(IQueryable<Tin> source, PaginatedListQuery query, Func<Tin, T> mapper)
     {
+        var pageNumber = query.PageNumber;
+        var pageSize = query.PageSize;
+
         if (pageNumber < 1) throw new ArgumentOutOfRangeException(nameof(pageNumber), "Must be greater than 0.");
         if (pageSize < 1) throw new ArgumentOutOfRangeException(nameof(pageSize), "Must be greater than 0.");
 
         var totalCount = await source.CountAsync();
         var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
         var flooredPageNumber = Math.Min(pageNumber, totalPages == 0 ? 1 : totalPages);
-        var items = totalCount == 0 ?
-            new List<T>() :
-            await source.Skip((flooredPageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
-        return new PaginatedListResponse<T>(items, totalCount, totalPages, flooredPageNumber, pageSize);
+        if (totalCount == 0) return new PaginatedListResponse<T>(new List<T>(), totalCount, totalPages, pageNumber, pageSize);
+
+        var inputItems = await source
+            .Skip((flooredPageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        var outputItems = inputItems
+            .Select(mapper)
+            .ToList();
+
+        return new PaginatedListResponse<T>(outputItems, totalCount, totalPages, flooredPageNumber, pageSize);
     }
 }

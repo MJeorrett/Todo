@@ -1,6 +1,11 @@
-﻿namespace Todo.Application.Todos;
+﻿using NodaTime;
+using Todo.Application.Common.Models;
+using Todo.Domain.Common;
+using Todo.Domain.Entities;
 
-public record TodoDetailsDto
+namespace Todo.Application.Todos;
+
+public record TodoDetailsDto : IAuditableDto, IEntity
 {
     public int Id { get; init; }
 
@@ -13,4 +18,17 @@ public record TodoDetailsDto
     public DateTime? LastUpdatedAt { get; init; }
 
     public string LastUpdatedBy { get; init; } = "";
+
+    public static TodoDetailsDto FromEntity(TodoEntity todoEntity)
+    {
+        return new()
+        {
+            Id = todoEntity.Id,
+            Title = todoEntity.Title,
+            CreatedAt = todoEntity.CreatedAt.ToDateTimeUtc(),
+            CreatedBy = todoEntity.CreatedBy,
+            LastUpdatedAt = todoEntity.LastUpdatedAt?.ToDateTimeUtc(),
+            LastUpdatedBy = todoEntity.LastUpdatedBy,
+        };
+    }
 }

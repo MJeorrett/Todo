@@ -24,13 +24,20 @@ An approach to ensuring CreatedAt, CreatedBy, LastUpdatedAt and LastUpdatedBy pr
 - XUnit
 
 ## TODO
+- list todos e2e test
 - user management (super admin)
 - paginated list todos
+  - unit test paginatedListResponse
 - searching list todos
 - sorting list todos
 - Email sending
-- Embedded image
+	- Embedded image
 - Test data builders
+- Versioning
+- Roles
+	- resource baed authorization policy.
+- download as csv
+- review access modifiers
 - :heavy_check_mark: HttpClient extensions in e2e tests.
 - :heavy_check_mark: Fix todo test suites not runing on their own.
 	- Use XUnit instead of NUnit

@@ -12,6 +12,7 @@ public class PaginatedListResponseTests
     public record TestEntity(int Id)
     {
     }
+    private static int TestMapper(TestEntity entity) => entity.Id;
 
     [Fact]
     public async Task ShouldThrowExceptionWhenPageNumberIsLessThan1()
@@ -20,7 +21,11 @@ public class PaginatedListResponseTests
             .WithEntity(new(1));
 
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
-            PaginatedListResponse<TestEntity>.CreateAsync(dbContext.Entities, 1, 0));
+            PaginatedListResponse<int>.CreateAsync(dbContext.Entities, new PaginatedListQuery()
+            {
+                PageNumber = 0,
+                PageSize = 1,
+            }, TestMapper));
     }
 
     [Fact]
@@ -30,7 +35,11 @@ public class PaginatedListResponseTests
             .WithEntity(new(1));
 
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
-            PaginatedListResponse<TestEntity>.CreateAsync(dbContext.Entities, 1, 0));
+            PaginatedListResponse<int>.CreateAsync(dbContext.Entities, new PaginatedListQuery()
+            {
+                PageNumber = 1,
+                PageSize = 0,
+            }, TestMapper));
     }
 
     [Fact]
@@ -38,7 +47,11 @@ public class PaginatedListResponseTests
     {
         using var dbContext = TestDbContext<TestEntity>.CreateInMemory();
 
-        var actual = await PaginatedListResponse<TestEntity>.CreateAsync(dbContext.Entities, 1, 1);
+        var actual = await PaginatedListResponse<int>.CreateAsync(dbContext.Entities, new PaginatedListQuery()
+        {
+            PageNumber = 1,
+            PageSize = 1,
+        }, TestMapper);
 
         Assert.Equal(1, actual.PageNumber);
         Assert.Equal(1, actual.PageSize);
@@ -46,7 +59,7 @@ public class PaginatedListResponseTests
         Assert.Equal(0, actual.TotalCount);
         Assert.False(actual.HasPreviousPage);
         Assert.False(actual.HasNextPage);
-        Assert.Equal(new List<TestEntity> { }, actual.Items);
+        Assert.Equal(new List<int> { }, actual.Items);
     }
 
     [Fact]
@@ -55,7 +68,11 @@ public class PaginatedListResponseTests
         using var dbContext = TestDbContext<TestEntity>.CreateInMemory()
             .WithEntity(new(1));
 
-        var actual = await PaginatedListResponse<TestEntity>.CreateAsync(dbContext.Entities, 1, 1);
+        var actual = await PaginatedListResponse<int>.CreateAsync(dbContext.Entities, new PaginatedListQuery()
+        {
+            PageNumber = 1,
+            PageSize = 1,
+        }, TestMapper);
 
         Assert.Equal(1, actual.PageNumber);
         Assert.Equal(1, actual.PageSize);
@@ -63,7 +80,7 @@ public class PaginatedListResponseTests
         Assert.Equal(1, actual.TotalCount);
         Assert.False(actual.HasPreviousPage);
         Assert.False(actual.HasNextPage);
-        Assert.Equal(new List<TestEntity> { new(1) }, actual.Items);
+        Assert.Equal(new List<int> { 1 }, actual.Items);
     }
 
     [Fact]
@@ -72,7 +89,11 @@ public class PaginatedListResponseTests
         using var dbContext = TestDbContext<TestEntity>.CreateInMemory()
             .WithEntities(new() { new(1), new(2) });
 
-        var actual = await PaginatedListResponse<TestEntity>.CreateAsync(dbContext.Entities, 1, 1);
+        var actual = await PaginatedListResponse<int>.CreateAsync(dbContext.Entities, new PaginatedListQuery()
+        {
+            PageNumber = 1,
+            PageSize = 1,
+        }, TestMapper);
 
         Assert.True(actual.HasNextPage);
     }
@@ -83,7 +104,11 @@ public class PaginatedListResponseTests
         using var dbContext = TestDbContext<TestEntity>.CreateInMemory()
             .WithEntities(new() { new(1), new(2) });
 
-        var actual = await PaginatedListResponse<TestEntity>.CreateAsync(dbContext.Entities, 1, 3);
+        var actual = await PaginatedListResponse<int>.CreateAsync(dbContext.Entities, new PaginatedListQuery()
+        {
+            PageNumber = 1,
+            PageSize = 3,
+        }, TestMapper);
 
         Assert.False(actual.HasNextPage);
     }
@@ -94,7 +119,11 @@ public class PaginatedListResponseTests
         using var dbContext = TestDbContext<TestEntity>.CreateInMemory()
             .WithEntities(new() { new(1), new(2) });
 
-        var actual = await PaginatedListResponse<TestEntity>.CreateAsync(dbContext.Entities, 2, 1);
+        var actual = await PaginatedListResponse<int>.CreateAsync(dbContext.Entities, new PaginatedListQuery()
+        {
+            PageNumber = 2,
+            PageSize = 1,
+        }, TestMapper);
 
         Assert.True(actual.HasPreviousPage);
     }
@@ -105,7 +134,11 @@ public class PaginatedListResponseTests
         using var dbContext = TestDbContext<TestEntity>.CreateInMemory()
             .WithEntities(new() { new(1), new(2), new(3), new(4) });
 
-        var actual = await PaginatedListResponse<TestEntity>.CreateAsync(dbContext.Entities, 1, 2);
+        var actual = await PaginatedListResponse<int>.CreateAsync(dbContext.Entities, new PaginatedListQuery()
+        {
+            PageNumber = 1,
+            PageSize = 2,
+        }, TestMapper);
 
         Assert.Equal(2, actual.TotalPages);
     }
@@ -116,7 +149,11 @@ public class PaginatedListResponseTests
         using var dbContext = TestDbContext<TestEntity>.CreateInMemory()
             .WithEntities(new() { new(1), new(2), new(3) });
 
-        var actual = await PaginatedListResponse<TestEntity>.CreateAsync(dbContext.Entities, 1, 2);
+        var actual = await PaginatedListResponse<int>.CreateAsync(dbContext.Entities, new PaginatedListQuery()
+        {
+            PageNumber = 1,
+            PageSize = 2,
+        }, TestMapper);
 
         Assert.Equal(2, actual.TotalPages);
     }
@@ -127,7 +164,11 @@ public class PaginatedListResponseTests
         using var dbContext = TestDbContext<TestEntity>.CreateInMemory()
             .WithEntities(new() { new(1), new(2), new(3) });
 
-        var actual = await PaginatedListResponse<TestEntity>.CreateAsync(dbContext.Entities, 5, 2);
+        var actual = await PaginatedListResponse<int>.CreateAsync(dbContext.Entities, new PaginatedListQuery()
+        {
+            PageNumber = 5,
+            PageSize = 2,
+        }, TestMapper);
 
         Assert.Equal(2, actual.PageNumber);
     }
@@ -138,8 +179,12 @@ public class PaginatedListResponseTests
         using var dbContext = TestDbContext<TestEntity>.CreateInMemory()
             .WithEntities(new() { new(1), new(2), new(3) });
 
-        var actual = await PaginatedListResponse<TestEntity>.CreateAsync(dbContext.Entities, 2, 1);
+        var actual = await PaginatedListResponse<int>.CreateAsync(dbContext.Entities, new PaginatedListQuery()
+        {
+            PageNumber = 2,
+            PageSize = 1,
+        }, TestMapper);
 
-        Assert.Equal(new List<TestEntity> { new(2) }, actual.Items);
+        Assert.Equal(new List<int> { 2 }, actual.Items);
     }
 }
