@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Todo.Application.Todos;
+using Todo.WebApi.E2eTests.Shared.Assertions;
 using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
 using Todo.WebApi.E2eTests.Shared.Extensions;
@@ -28,7 +29,7 @@ public class TodoE2eTests : TestBase
 
         var getByIdResponse = await httpClient.CallGetTodoById(todoId);
 
-        await getByIdResponse.AssertIsStatusCode(200);
+        await getByIdResponse.Should().BeStatusCode(200);
 
         var createdTodo = await getByIdResponse.ReadResponseContentAs<TodoDetailsDto>();
 

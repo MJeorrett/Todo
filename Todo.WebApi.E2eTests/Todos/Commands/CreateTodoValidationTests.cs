@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
+using Todo.WebApi.E2eTests.Shared.Assertions;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
-using Todo.WebApi.E2eTests.Shared.Extensions;
 using Xunit;
 
 namespace Todo.WebApi.E2eTests.Todos.Commands;
@@ -27,7 +27,7 @@ public class CreateTodoValidationTests : TestBase, IAsyncLifetime
     {
         var actualResult = await _httpClient.CallCreateTodo(new { });
 
-        await actualResult.AssertIs400WithErrorForField("Title");
+        await actualResult.Should().BeStatusCode400WithErrorForField("Title");
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public class CreateTodoValidationTests : TestBase, IAsyncLifetime
             title = "",
         });
 
-        await actualResult.AssertIs400WithErrorForField("Title");
+        await actualResult.Should().BeStatusCode400WithErrorForField("Title");
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public class CreateTodoValidationTests : TestBase, IAsyncLifetime
             title = new string('a', 257),
         });
 
-        await actualResult.AssertIs400WithErrorForField("Title");
+        await actualResult.Should().BeStatusCode400WithErrorForField("Title");
     }
 
     [Fact]
@@ -60,6 +60,6 @@ public class CreateTodoValidationTests : TestBase, IAsyncLifetime
             title = new string('a', 256),
         });
 
-        await actualResult.AssertIsStatusCode(201);
+        await actualResult.Should().BeStatusCode(201);
     }
 }

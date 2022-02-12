@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Todo.WebApi.E2eTests.Shared.Assertions;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
 using Todo.WebApi.E2eTests.Shared.Extensions;
 using Xunit;
@@ -24,6 +25,19 @@ public class CreateTodoTests : TestBase
             title = "Learn to code",
         });
 
-        await response.AssertIsStatusCode(401);
+        await response.Should().BeStatusCode(401);
+    }
+
+    [Fact]
+    public async Task ShouldReturn201WhenAllOk()
+    {
+        var httpClient = await CreateUserAndAuthenticatedHttpClient("test@mailinator.com", "Sitekit123!");
+
+        var response = await httpClient.CallCreateTodo(new
+        {
+            title = "Learn to code",
+        });
+
+        await response.Should().BeStatusCode(201);
     }
 }

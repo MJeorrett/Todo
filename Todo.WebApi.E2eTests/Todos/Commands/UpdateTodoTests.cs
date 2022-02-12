@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Todo.WebApi.E2eTests.Shared.Assertions;
 using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
 using Todo.WebApi.E2eTests.Shared.Extensions;
@@ -32,7 +33,7 @@ public class UpdateTodoTests : TestBase
             title = "Starve cat",
         });
 
-        await response.AssertIsStatusCode(401);
+        await response.Should().BeStatusCode(401);
     }
 
     [Fact]
@@ -52,7 +53,7 @@ public class UpdateTodoTests : TestBase
             title = "Starve cat",
         });
 
-        await response.AssertIsStatusCode(200);
+        await response.Should().BeStatusCode(200);
 
         var updatedTodo = await GetTodoById(httpClient, existingTodoId);
 

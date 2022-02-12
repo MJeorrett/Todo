@@ -1,5 +1,6 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
+using Todo.WebApi.E2eTests.Shared.Assertions;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
 using Todo.WebApi.E2eTests.Shared.Extensions;
 using Xunit;
@@ -31,7 +32,7 @@ public class GetTodoByIdTests : TestBase, IAsyncLifetime
         var unauthenticatedHttpClient = Factory.CreateClient();
         var response = await unauthenticatedHttpClient.CallGetTodoById(todoId);
 
-        await response.AssertIsStatusCode(401);
+        await response.Should().BeStatusCode(401);
     }
 
     [Fact]
@@ -43,7 +44,7 @@ public class GetTodoByIdTests : TestBase, IAsyncLifetime
 
         var response = await _authenticatedHttpClient.CallGetTodoById(notATodoId);
 
-        await response.AssertIsStatusCode(404);
+        await response.Should().BeStatusCode(404);
     }
 
     private static async Task<int> CreateTodo(HttpClient httpClient)
@@ -53,7 +54,7 @@ public class GetTodoByIdTests : TestBase, IAsyncLifetime
             title = "Clean bike",
         });
 
-        await createResponse.AssertIsStatusCode(201);
+        await createResponse.Should().BeStatusCode(201);
 
         var todoId = await createResponse.ReadResponseContentAs<int>();
         return todoId;
