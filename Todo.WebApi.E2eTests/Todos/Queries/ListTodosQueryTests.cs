@@ -1,11 +1,9 @@
-﻿using FluentAssertions;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Todo.Application.Common.AppRequests;
 using Todo.Application.Todos;
+using Todo.WebApi.E2eTests.Shared.Assertions;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
-using Todo.WebApi.E2eTests.Shared.Extensions;
 using Xunit;
 
 namespace Todo.WebApi.E2eTests.Todos.Queries;
@@ -34,7 +32,7 @@ public class ListTodosQueryTests : TestBase
 
         var response = await httpClient.CallListTodos(1, 10);
 
-        await response.AssertIsStatusCode(401);
+        await response.Should().BeStatusCode(401);
     }
 
     [Fact]
@@ -46,9 +44,24 @@ public class ListTodosQueryTests : TestBase
 
         var response = await _authenticatedHttpClient.CallListTodos(1, 2);
 
-        await response.AssertIsStatusCode(200);
+        var expected = new List<TodoDetailsDto>
+        {
+            new TodoDetailsDto() { Title = "A todo" },
+            new TodoDetailsDto() { Title = "B todo" },
+        };
 
-        var actual = await response.ReadResponseContentAs<PaginatedListResponse<TodoDetailsDto>>();
+        (await response.Should()
+            .ContainPaginatedListOf<TodoDetailsDto>())
+            .WithItemsThat.Should().EqualIgnoringIdAndAuditProperties(expected);
+    }
+
+    [Fact]
+    public async Task ShouldReturnPartialPage()
+    {
+        await CreateTodo(_authenticatedHttpClient, new { title = "A todo" });
+        await CreateTodo(_authenticatedHttpClient, new { title = "B todo" });
+
+        var response = await _authenticatedHttpClient.CallListTodos(1, 3);
 
         var expected = new List<TodoDetailsDto>
         {
@@ -56,28 +69,9 @@ public class ListTodosQueryTests : TestBase
             new TodoDetailsDto() { Title = "B todo" },
         };
 
-        actual!.Items.Should().BeEquivalentToIgnoringIdAndAudit(expected);
-    }
-
-    [Fact]
-    public async Task ShouldReturnPartialPage()
-    {
-        await CreateTodo(_authenticatedHttpClient, new { title = "A todo" });
-        await CreateTodo(_authenticatedHttpClient, new { title = "C todo" });
-
-        var response = await _authenticatedHttpClient.CallListTodos(1, 3);
-
-        await response.AssertIsStatusCode(200);
-
-        var actual = await response.ReadResponseContentAs<PaginatedListResponse<TodoDetailsDto>>();
-
-        var expected = new List<TodoDetailsDto>
-        {
-            new TodoDetailsDto() { Title = "A todo" },
-            new TodoDetailsDto() { Title = "C todo" },
-        };
-
-        actual!.Items.Should().BeEquivalentToIgnoringIdAndAudit(expected);
+        (await response.Should()
+            .ContainPaginatedListOf<TodoDetailsDto>())
+            .WithItemsThat.Should().EqualIgnoringIdAndAuditProperties(expected);
     }
 
     [Fact]
@@ -89,16 +83,14 @@ public class ListTodosQueryTests : TestBase
 
         var response = await _authenticatedHttpClient.CallListTodos(2, 1);
 
-        await response.AssertIsStatusCode(200);
-
-        var actual = await response.ReadResponseContentAs<PaginatedListResponse<TodoDetailsDto>>();
-
         var expected = new List<TodoDetailsDto>
         {
             new TodoDetailsDto() { Title = "B todo" },
         };
 
-        actual!.Items.Should().BeEquivalentToIgnoringIdAndAudit(expected);
+        (await response.Should()
+            .ContainPaginatedListOf<TodoDetailsDto>())
+            .WithItemsThat.Should().EqualIgnoringIdAndAuditProperties(expected);
     }
 
     [Fact]
@@ -110,10 +102,6 @@ public class ListTodosQueryTests : TestBase
 
         var response = await _authenticatedHttpClient.CallListTodos(1, 10);
 
-        await response.AssertIsStatusCode(200);
-
-        var actual = await response.ReadResponseContentAs<PaginatedListResponse<TodoDetailsDto>>();
-
         var expected = new List<TodoDetailsDto>
         {
             new TodoDetailsDto() { Title = "A todo" },
@@ -121,6 +109,8 @@ public class ListTodosQueryTests : TestBase
             new TodoDetailsDto() { Title = "C todo" },
         };
 
-        actual!.Items.Should().BeEquivalentToIgnoringIdAndAudit(expected);
+        (await response.Should()
+            .ContainPaginatedListOf<TodoDetailsDto>())
+            .WithItemsThat.Should().EqualIgnoringIdAndAuditProperties(expected);
     }
 }

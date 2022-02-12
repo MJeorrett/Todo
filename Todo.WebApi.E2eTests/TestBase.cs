@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 using Todo.Application.Todos;
+using Todo.WebApi.E2eTests.Shared.Assertions;
 using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
 using Todo.WebApi.E2eTests.Shared.Extensions;
@@ -49,7 +50,7 @@ public class TestBase : IAsyncLifetime
     {
         var response = await httpClient.CallCreateTodo(createTodoRequest);
 
-        await response.AssertIsStatusCode(201);
+        await response.Should().BeStatusCode(201);
 
         var todoId = await response.ReadResponseContentAs<int>();
         return todoId;
@@ -59,7 +60,7 @@ public class TestBase : IAsyncLifetime
     {
         var response = await httpClient.CallGetTodoById(todoId);
 
-        await response.AssertIsStatusCode(200);
+        await response.Should().BeStatusCode(200);
 
         var todo = await response.ReadResponseContentAs<TodoDetailsDto>();
 
