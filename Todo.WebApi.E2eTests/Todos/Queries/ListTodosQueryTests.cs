@@ -52,7 +52,7 @@ public class ListTodosQueryTests : TestBase
 
         (await response.Should()
             .ContainPaginatedListOf<TodoDetailsDto>())
-            .WithItemsThat.Should().EqualIgnoringIdAndAuditProperties(expected);
+            .Which.Items.Should().EqualIgnoringIdAndAuditProperties(expected);
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public class ListTodosQueryTests : TestBase
 
         (await response.Should()
             .ContainPaginatedListOf<TodoDetailsDto>())
-            .WithItemsThat.Should().EqualIgnoringIdAndAuditProperties(expected);
+            .Which.Items.Should().EqualIgnoringIdAndAuditProperties(expected);
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public class ListTodosQueryTests : TestBase
 
         (await response.Should()
             .ContainPaginatedListOf<TodoDetailsDto>())
-            .WithItemsThat.Should().EqualIgnoringIdAndAuditProperties(expected);
+            .Which.Items.Should().EqualIgnoringIdAndAuditProperties(expected);
     }
 
     [Fact]
@@ -111,6 +111,6 @@ public class ListTodosQueryTests : TestBase
 
         (await response.Should()
             .ContainPaginatedListOf<TodoDetailsDto>())
-            .WithItemsThat.Should().EqualIgnoringIdAndAuditProperties(expected);
+            .Which.Items.Should().EqualIgnoringIdAndAuditProperties(expected);
     }
 }
