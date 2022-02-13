@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using FluentAssertions;
+using System.Threading.Tasks;
 using Todo.Application.Todos;
 using Todo.WebApi.E2eTests.Shared.Assertions;
 using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
-using Todo.WebApi.E2eTests.Shared.Extensions;
 using Xunit;
 
 namespace Todo.WebApi.E2eTests.Todos;
@@ -29,16 +29,18 @@ public class TodoE2eTests : TestBase
 
         var getByIdResponse = await httpClient.CallGetTodoById(todoId);
 
-        await getByIdResponse.Should().BeStatusCode(200);
+        var expected = new TodoDetailsDto
+        {
+            Id = todoId,
+            Title = "Clean bike",
+            CreatedAt = MockedNowDateTimeUtc,
+            CreatedBy = userId,
+            LastUpdatedAt = null,
+            LastUpdatedBy = "",
+        };
 
-        var createdTodo = await getByIdResponse.ReadResponseContentAs<TodoDetailsDto>();
-
-        Assert.NotNull(createdTodo);
-        Assert.Equal(todoId, createdTodo?.Id);
-        Assert.Equal("Clean bike", createdTodo?.Title);
-        Assert.Equal(Factory.MockedNow.ToDateTimeUtc(), createdTodo!.CreatedAt);
-        Assert.Equal(userId, createdTodo?.CreatedBy);
-        Assert.Null(createdTodo?.LastUpdatedAt);
-        Assert.Empty(createdTodo?.LastUpdatedBy);
+        await getByIdResponse.Should().HaveStatusCode(200);
+        (await getByIdResponse.Should().ContainAppResponseOfType<TodoDetailsDto>())
+            .Which.Content.Should().BeEquivalentTo(expected);
     }
 }

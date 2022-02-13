@@ -4,46 +4,31 @@ using FluentAssertions.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Todo.Application.Common.AppRequests;
-using Todo.Application.Common.Models;
-using Todo.Domain.Common;
 using Todo.WebApi.E2eTests.Shared.Extensions;
 
 namespace Todo.WebApi.E2eTests.Shared.Assertions;
 
-public static class HttpResponseMessageExtensions
+public static class HttpResponseMessageAssertionsExtensions
 {
-    public static HttpResponseMessageAssertions Should(this HttpResponseMessage instance)
+    public static async Task<AndConstraint<HttpResponseMessageAssertions>> HaveStatusCode(this HttpResponseMessageAssertions target, int expectedStatusCode)
     {
-        return new HttpResponseMessageAssertions(instance);
-    }
-}
+        var subject = target.Subject;
 
-public class HttpResponseMessageAssertions : ReferenceTypeAssertions<HttpResponseMessage, HttpResponseMessageAssertions>
-{
-    protected override string Identifier => "response";
-
-    public HttpResponseMessageAssertions(HttpResponseMessage subject) : base(subject)
-    {
-    }
-
-    public async Task<AndConstraint<HttpResponseMessageAssertions>> BeStatusCode(int expectedStatusCode)
-    {
-        var responseContent = expectedStatusCode != (int)Subject.StatusCode ?
-            await Subject.Content.ReadAsStringAsync() :
+        var responseContent = expectedStatusCode != (int)subject.StatusCode ?
+            await subject.Content.ReadAsStringAsync() :
             "";
 
         Execute.Assertion
-            .ForCondition((int)Subject.StatusCode == expectedStatusCode)
-            .FailWith($"Expected status code {expectedStatusCode} but recieved status code {(int)Subject.StatusCode} with " +
+            .ForCondition((int)subject.StatusCode == expectedStatusCode)
+            .FailWith($"Expected status code {expectedStatusCode} but recieved status code {(int)subject.StatusCode} with " +
                 (string.IsNullOrEmpty(responseContent) ?
                     "no content." :
                     $"content:\n{responseContent.Replace("{", "{{").Replace("}", "}}")}"));
 
-        return new AndConstraint<HttpResponseMessageAssertions>(this);
+        return new AndConstraint<HttpResponseMessageAssertions>(target);
     }
 
     private record ErrorResponse
@@ -56,13 +41,15 @@ public class HttpResponseMessageAssertions : ReferenceTypeAssertions<HttpRespons
         public List<Error> Errors { get; init; } = new();
     }
 
-    public async Task<AndConstraint<HttpResponseMessageAssertions>> BeStatusCode400WithErrorForField(string expectedErrorField)
+    public static async Task<AndConstraint<HttpResponseMessageAssertions>> HaveStatusCode400WithErrorForField(this HttpResponseMessageAssertions target, string expectedErrorField)
     {
-        var responseContent = await Subject.Content.ReadAsStringAsync();
+        var subject = target.Subject;
+
+        var responseContent = await subject.Content.ReadAsStringAsync();
 
         Execute.Assertion
-            .ForCondition((int)Subject.StatusCode == 400)
-            .FailWith($"Expected status code 400 but recieved status code {(int)Subject.StatusCode} with " +
+            .ForCondition((int)subject.StatusCode == 400)
+            .FailWith($"Expected status code 400 but recieved status code {(int)subject.StatusCode} with " +
                 (string.IsNullOrEmpty(responseContent) ?
                     "no content." :
                     $"content:\n{responseContent.Replace("{", "{{").Replace("}", "}}")}"))
@@ -92,19 +79,34 @@ public class HttpResponseMessageAssertions : ReferenceTypeAssertions<HttpRespons
                 _ => expectedErrorField,
                 errors => string.Join(",", errors.EnumerateObject().Select(_ => _.Name)));
 
-        return new AndConstraint<HttpResponseMessageAssertions>(this);
+        return new AndConstraint<HttpResponseMessageAssertions>(target);
     }
 
-    public async Task<AndWhichConstraint<HttpResponseMessageAssertions, PaginatedListResponse<T>>> ContainPaginatedListOf<T>()
+    public static async Task<AndWhichConstraint<HttpResponseMessageAssertions, PaginatedListResponse<T>>> ContainPaginatedListOf<T>(this HttpResponseMessageAssertions target)
     {
-        await Subject.Should().BeStatusCode(200);
+        var subject = target.Subject;
 
-        var (parseSuccess, paginatedListResponse) = await Subject.TryReadResponseContentAs<PaginatedListResponse<T>>();
+        await subject.Should().HaveStatusCode(200);
+
+        var (parseSuccess, parsedContent) = await subject.TryReadContentAs<AppResponse<PaginatedListResponse<T>>>();
 
         Execute.Assertion
             .ForCondition(parseSuccess)
             .FailWith($"Expected content to be parseable as a paginated list response of type {typeof(T)}");
 
-        return new AndWhichConstraint<HttpResponseMessageAssertions, PaginatedListResponse<T>>(this, paginatedListResponse!);
+        return new AndWhichConstraint<HttpResponseMessageAssertions, PaginatedListResponse<T>>(target, parsedContent!.Content!);
+    }
+
+    public static async Task<AndWhichConstraint<HttpResponseMessageAssertions, AppResponse<T>>> ContainAppResponseOfType<T>(this HttpResponseMessageAssertions target)
+    {
+        var subject = target.Subject;
+
+        var (parseSuccess, parsedContent) = await subject.TryReadContentAs<AppResponse<T>>();
+
+        Execute.Assertion
+            .ForCondition(parseSuccess)
+            .FailWith($"Expected content to be parseable as standard app response of type {typeof(T)}");
+
+        return new AndWhichConstraint<HttpResponseMessageAssertions, AppResponse<T>>(target, parsedContent!);
     }
 }

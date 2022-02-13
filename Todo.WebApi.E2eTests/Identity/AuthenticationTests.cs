@@ -1,4 +1,5 @@
-﻿using HtmlAgilityPack;
+﻿using FluentAssertions;
+using HtmlAgilityPack;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -51,7 +52,7 @@ public class AuthenticationTests : TestBase
         var postLoginResponseQuery = HttpUtility.ParseQueryString(postLoginResponse.RequestMessage!.RequestUri!.Query);
         var code = postLoginResponseQuery[0];
 
-        Assert.NotEmpty(code);
+        code.Should().NotBeEmpty();
 
         var getTokenResponse = await httpClient.PostToken(
             clientId, redirectUri, code!, codeVerifier);
@@ -60,7 +61,8 @@ public class AuthenticationTests : TestBase
 
         var getTokenResponseBody = await getTokenResponse.Content.ReadFromJsonAsync<GetTokenResponse>();
 
-        Assert.NotEmpty(getTokenResponseBody?.access_token);
+        getTokenResponseBody.Should().NotBeNull();
+        getTokenResponseBody!.access_token.Should().NotBeEmpty();
     }
 
     private static async Task<string> ParseAntiforgeryTokenFromLoginPage(HttpResponseMessage getLoginPageResponse)

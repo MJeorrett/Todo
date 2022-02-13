@@ -1,8 +1,8 @@
-﻿using System.Net.Http;
+﻿using FluentAssertions;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Todo.WebApi.E2eTests.Shared.Assertions;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
-using Todo.WebApi.E2eTests.Shared.Extensions;
 using Xunit;
 
 namespace Todo.WebApi.E2eTests.Todos.Queries;
@@ -30,7 +30,7 @@ public class ListTodosQueryValidationTests : TestBase, IAsyncLifetime
     {
         var actualResult = await _httpClient.CallListTodos(invalidPageNumber, 1);
 
-        await actualResult.Should().BeStatusCode400WithErrorForField("PageNumber");
+        await actualResult.Should().HaveStatusCode400WithErrorForField("PageNumber");
     }
 
     [Theory]
@@ -40,6 +40,6 @@ public class ListTodosQueryValidationTests : TestBase, IAsyncLifetime
     {
         var actualResult = await _httpClient.CallListTodos(1, invalidPageSize);
 
-        await actualResult.Should().BeStatusCode400WithErrorForField("PageSize");
+        await actualResult.Should().HaveStatusCode400WithErrorForField("PageSize");
     }
 }

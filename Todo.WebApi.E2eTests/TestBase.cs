@@ -1,10 +1,13 @@
-﻿using System.Net.Http;
+﻿using FluentAssertions;
+using System;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Todo.Application.Common.AppRequests;
 using Todo.Application.Todos;
 using Todo.WebApi.E2eTests.Shared.Assertions;
 using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
-using Todo.WebApi.E2eTests.Shared.Extensions;
 using Todo.WebApi.E2eTests.Shared.Models;
 using Xunit;
 
@@ -13,6 +16,7 @@ namespace Todo.WebApi.E2eTests;
 public class TestBase : IAsyncLifetime
 {
     protected readonly CustomWebApplicationFactory Factory = null!;
+    protected DateTime MockedNowDateTimeUtc => Factory.MockedNow.ToDateTimeUtc();
 
     private readonly ClientApplicationDetails _testClientApplicationDetails = new();
 
@@ -48,21 +52,22 @@ public class TestBase : IAsyncLifetime
     {
         var response = await httpClient.CallCreateTodo(createTodoRequest);
 
-        await response.Should().BeStatusCode(201);
+        await response.Should().HaveStatusCode(201);
 
-        var todoId = await response.ReadResponseContentAs<int>();
-        return todoId;
+        var parsedResponse = await response.Content.ReadFromJsonAsync<AppResponse<int>>();
+
+        return parsedResponse!.Content;
     }
 
     public static async Task<TodoDetailsDto?> GetTodoById(HttpClient httpClient, int todoId)
     {
         var response = await httpClient.CallGetTodoById(todoId);
 
-        await response.Should().BeStatusCode(200);
+        await response.Should().HaveStatusCode(200);
 
-        var todo = await response.ReadResponseContentAs<TodoDetailsDto>();
+        var parsedResponse = await response.Content.ReadFromJsonAsync<AppResponse<TodoDetailsDto>>();
 
-        return todo;
+        return parsedResponse!.Content;
     }
 
     private async Task CreateDefaultClientApplication()
