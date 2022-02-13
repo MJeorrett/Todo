@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Todo.Application.Common.AppRequests;
 using Todo.Application.Todos;
 using Todo.WebApi.E2eTests.Shared.Assertions;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
+using Todo.WebApi.E2eTests.Shared.Extensions;
 using Xunit;
 
 namespace Todo.WebApi.E2eTests.Todos.Queries;
@@ -37,11 +39,21 @@ public class ListTodosQueryTests : TestBase
     }
 
     [Fact]
+    public async Task ShouldSuccessfullyReturnWhenNoTodosExist()
+    {
+        var response = await _authenticatedHttpClient.CallListTodos(1, 10);
+
+        var expected = new PaginatedListResponse<TodoDetailsDto>(new() { }, 0, 0, 1, 10);
+
+        await response.Should().HaveStatusCode(200);
+        (await response.Should().ContainPaginatedListOf<TodoDetailsDto>())
+            .Which.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
     public async Task ShouldReturnCompletePage()
     {
-        await CreateTodo(_authenticatedHttpClient, new { title = "A todo" });
-        await CreateTodo(_authenticatedHttpClient, new { title = "C todo" });
-        await CreateTodo(_authenticatedHttpClient, new { title = "B todo" });
+        await _authenticatedHttpClient.DoCreateTodosWithTitles("A todo", "C todo", "B todo");
 
         var response = await _authenticatedHttpClient.CallListTodos(1, 2);
 
@@ -52,16 +64,14 @@ public class ListTodosQueryTests : TestBase
         };
 
         await response.Should().HaveStatusCode(200);
-        (await response.Should()
-            .ContainPaginatedListOf<TodoDetailsDto>())
+        (await response.Should().ContainPaginatedListOf<TodoDetailsDto>())
             .Which.Items.Should().EqualIgnoringIdAndAuditProperties(expected);
     }
 
     [Fact]
     public async Task ShouldReturnPartialPage()
     {
-        await CreateTodo(_authenticatedHttpClient, new { title = "A todo" });
-        await CreateTodo(_authenticatedHttpClient, new { title = "B todo" });
+        await _authenticatedHttpClient.DoCreateTodosWithTitles("A todo", "B todo");
 
         var response = await _authenticatedHttpClient.CallListTodos(1, 3);
 
@@ -72,17 +82,14 @@ public class ListTodosQueryTests : TestBase
         };
 
         await response.Should().HaveStatusCode(200);
-        (await response.Should()
-            .ContainPaginatedListOf<TodoDetailsDto>())
+        (await response.Should().ContainPaginatedListOf<TodoDetailsDto>())
             .Which.Items.Should().EqualIgnoringIdAndAuditProperties(expected);
     }
 
     [Fact]
     public async Task ShouldReturnMiddlePage()
     {
-        await CreateTodo(_authenticatedHttpClient, new { title = "A todo" });
-        await CreateTodo(_authenticatedHttpClient, new { title = "C todo" });
-        await CreateTodo(_authenticatedHttpClient, new { title = "B todo" });
+        await _authenticatedHttpClient.DoCreateTodosWithTitles("A todo", "C todo", "B todo");
 
         var response = await _authenticatedHttpClient.CallListTodos(2, 1);
 
@@ -92,17 +99,14 @@ public class ListTodosQueryTests : TestBase
         };
 
         await response.Should().HaveStatusCode(200);
-        (await response.Should()
-            .ContainPaginatedListOf<TodoDetailsDto>())
+        (await response.Should().ContainPaginatedListOf<TodoDetailsDto>())
             .Which.Items.Should().EqualIgnoringIdAndAuditProperties(expected);
     }
 
     [Fact]
     public async Task ShouldOrderByTitleByDefault()
     {
-        await CreateTodo(_authenticatedHttpClient, new { title = "A todo" });
-        await CreateTodo(_authenticatedHttpClient, new { title = "C todo" });
-        await CreateTodo(_authenticatedHttpClient, new { title = "B todo" });
+        await _authenticatedHttpClient.DoCreateTodosWithTitles("A todo", "C todo", "B todo");
 
         var response = await _authenticatedHttpClient.CallListTodos(1, 10);
 
@@ -114,8 +118,7 @@ public class ListTodosQueryTests : TestBase
         };
 
         await response.Should().HaveStatusCode(200);
-        (await response.Should()
-            .ContainPaginatedListOf<TodoDetailsDto>())
+        (await response.Should().ContainPaginatedListOf<TodoDetailsDto>())
             .Which.Items.Should().EqualIgnoringIdAndAuditProperties(expected);
     }
 }

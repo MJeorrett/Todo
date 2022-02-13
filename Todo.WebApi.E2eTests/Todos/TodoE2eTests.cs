@@ -4,6 +4,7 @@ using Todo.Application.Todos;
 using Todo.WebApi.E2eTests.Shared.Assertions;
 using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
+using Todo.WebApi.E2eTests.Shared.Extensions;
 using Xunit;
 
 namespace Todo.WebApi.E2eTests.Todos;
@@ -22,10 +23,7 @@ public class TodoE2eTests : TestBase
         var userId = await Factory.CreateAspNetUser("test@mailinator.com", "Sitekit123!");
         var httpClient = await CreateHttpClientAuthenticatedAsUser("test@mailinator.com", "Sitekit123!");
 
-        var todoId = await CreateTodo(httpClient, new
-        {
-            title = "Clean bike",
-        });
+        var todoId = await httpClient.DoCreateTodoWithTitle("Clean bike");
 
         var getByIdResponse = await httpClient.CallGetTodoById(todoId);
 
