@@ -31,7 +31,7 @@ public class CreateTodoTests : TestBase
     [Fact]
     public async Task ShouldReturn201WhenAllOk()
     {
-        var httpClient = await CreateUserAndAuthenticatedHttpClient("test@mailinator.com", "Sitekit123!");
+        var httpClient = await CreateHttpClientAuthenticatedAsNewUser();
 
         var response = await httpClient.CallCreateTodo(new
         {

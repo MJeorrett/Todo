@@ -20,7 +20,7 @@ public class ListTodosQueryValidationTests : TestBase, IAsyncLifetime
     public override async Task InitializeAsync()
     {
         await base.InitializeAsync();
-        _httpClient = await CreateUserAndAuthenticatedHttpClient("test@mailinator.com", "Sitekit123!");
+        _httpClient = await CreateHttpClientAuthenticatedAsNewUser();
     }
 
     [Theory]

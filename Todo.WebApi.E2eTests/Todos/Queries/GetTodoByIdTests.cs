@@ -21,7 +21,7 @@ public class GetTodoByIdTests : TestBase, IAsyncLifetime
     {
         await base.InitializeAsync();
 
-        _authenticatedHttpClient = await CreateUserAndAuthenticatedHttpClient("test@mailinator.com", "Sitekit123!");
+        _authenticatedHttpClient = await CreateHttpClientAuthenticatedAsNewUser();
     }
 
     [Fact]

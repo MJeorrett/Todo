@@ -22,7 +22,7 @@ public class ListTodosQueryTests : TestBase
     {
         await base.InitializeAsync();
 
-        _authenticatedHttpClient = await CreateUserAndAuthenticatedHttpClient("test@mailinator.com", "Sitekit123!");
+        _authenticatedHttpClient = await CreateHttpClientAuthenticatedAsNewUser();
     }
 
     [Fact]

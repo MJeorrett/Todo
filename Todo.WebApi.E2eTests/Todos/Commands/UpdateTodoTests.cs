@@ -2,7 +2,6 @@
 using Todo.WebApi.E2eTests.Shared.Assertions;
 using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
-using Todo.WebApi.E2eTests.Shared.Extensions;
 using Xunit;
 
 namespace Todo.WebApi.E2eTests.Todos.Commands;
@@ -18,7 +17,7 @@ public class UpdateTodoTests : TestBase
     [Fact]
     public async Task ShouldReturn401WhenCallerNotAuthenticated()
     {
-        var authenticatedHttpClient = await CreateUserAndAuthenticatedHttpClient("test@mailinator.com", "Sitekit123!");
+        var authenticatedHttpClient = await CreateHttpClientAuthenticatedAsNewUser();
 
         var existingTodoId = await CreateTodo(authenticatedHttpClient, new
         {
