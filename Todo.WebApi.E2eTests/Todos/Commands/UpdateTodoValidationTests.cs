@@ -22,7 +22,7 @@ public class UpdateTodoValidationTests : TestBase, IAsyncLifetime
     {
         await base.InitializeAsync();
 
-        _httpClient = await CreateUserAndAuthenticatedHttpClient("test@mailinator.com", "Sitekit123!");
+        _httpClient = await CreateHttpClientAuthenticatedAsNewUser();
 
         existingTodoId = await CreateTodo(_httpClient, new
         {

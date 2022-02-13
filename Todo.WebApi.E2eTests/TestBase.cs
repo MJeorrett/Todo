@@ -37,13 +37,11 @@ public class TestBase : IAsyncLifetime
         return await Factory.CreateHttpClientAuthenticatedAsUser(_testClientApplicationDetails, userName, password);
     }
 
-    public async Task<HttpClient> CreateUserAndAuthenticatedHttpClient(
-        string userName,
-        string password)
+    public async Task<HttpClient> CreateHttpClientAuthenticatedAsNewUser(string userName = "default-test-user@mailinator.com", string password = "Sitekit123!")
     {
         await Factory.CreateAspNetUser(userName, password);
 
-        return await Factory.CreateHttpClientAuthenticatedAsUser(_testClientApplicationDetails, userName, password);
+        return await CreateHttpClientAuthenticatedAsUser(userName, password);
     }
 
     public static async Task<int> CreateTodo(HttpClient httpClient, object createTodoRequest)
