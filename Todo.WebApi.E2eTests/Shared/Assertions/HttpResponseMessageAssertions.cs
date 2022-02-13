@@ -95,7 +95,7 @@ public class HttpResponseMessageAssertions : ReferenceTypeAssertions<HttpRespons
         return new AndConstraint<HttpResponseMessageAssertions>(this);
     }
 
-    public async Task<HttpResponseMessageAssertionsWithParsedPaginatedList<T>> ContainPaginatedListOf<T>()
+    public async Task<AndWhichConstraint<HttpResponseMessageAssertions, PaginatedListResponse<T>>> ContainPaginatedListOf<T>()
     {
         await Subject.Should().BeStatusCode(200);
 
@@ -105,19 +105,6 @@ public class HttpResponseMessageAssertions : ReferenceTypeAssertions<HttpRespons
             .ForCondition(parseSuccess)
             .FailWith($"Expected content to be parseable as a paginated list response of type {typeof(T)}");
 
-        return new HttpResponseMessageAssertionsWithParsedPaginatedList<T>(this, paginatedListResponse!);
-    }
-}
-
-public class HttpResponseMessageAssertionsWithParsedPaginatedList<T>
-{
-    public HttpResponseMessageAssertions And { get; }
-    public PaginatedListResponse<T> That { get; }
-    public List<T> WithItemsThat => That.Items;
-
-    public HttpResponseMessageAssertionsWithParsedPaginatedList(HttpResponseMessageAssertions parentConstraint, PaginatedListResponse<T> parsedContent)
-    {
-        And = parentConstraint;
-        That = parsedContent;
+        return new AndWhichConstraint<HttpResponseMessageAssertions, PaginatedListResponse<T>>(this, paginatedListResponse!);
     }
 }
