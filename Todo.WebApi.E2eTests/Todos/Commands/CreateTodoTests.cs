@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using FluentAssertions;
+using System.Threading.Tasks;
 using Todo.WebApi.E2eTests.Shared.Assertions;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
-using Todo.WebApi.E2eTests.Shared.Extensions;
 using Xunit;
 
 namespace Todo.WebApi.E2eTests.Todos.Commands;
@@ -25,7 +25,7 @@ public class CreateTodoTests : TestBase
             title = "Learn to code",
         });
 
-        await response.Should().BeStatusCode(401);
+        await response.Should().HaveStatusCode(401);
     }
 
     [Fact]
@@ -38,6 +38,6 @@ public class CreateTodoTests : TestBase
             title = "Learn to code",
         });
 
-        await response.Should().BeStatusCode(201);
+        await response.Should().HaveStatusCode(201);
     }
 }

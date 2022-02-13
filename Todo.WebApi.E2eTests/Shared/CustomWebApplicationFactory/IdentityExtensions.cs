@@ -1,4 +1,5 @@
-﻿using HtmlAgilityPack;
+﻿using FluentAssertions;
+using HtmlAgilityPack;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using OpenIddict.Abstractions;
@@ -93,27 +94,28 @@ public static class IdentityExtensions
         var httpClient = factory.CreateClient();
         var getLoginPageResponse = await httpClient.CallGetLoginPage(clientId, redirectUri, codeChallenge);
 
-        await getLoginPageResponse.Should().BeStatusCode(200);
+        await getLoginPageResponse.Should().HaveStatusCode(200);
         string antiforgeryToken = await ParseAntiforgeryTokenFromLoginPage(getLoginPageResponse);
 
         var postLoginResponse = await httpClient.CallPostLogin(
             clientId, scope, redirectUri, codeChallenge, userName, password, antiforgeryToken);
 
-        await postLoginResponse.Should().BeStatusCode(200);
+        await postLoginResponse.Should().HaveStatusCode(200);
 
         var postLoginResponseQuery = HttpUtility.ParseQueryString(postLoginResponse.RequestMessage!.RequestUri!.Query);
         var code = postLoginResponseQuery[0];
 
-        Assert.NotEmpty(code);
+        code.Should().NotBeEmpty();
 
         var getTokenResponse = await httpClient.PostToken(
             clientId, redirectUri, code!, codeVerifier);
 
-        await getTokenResponse.Should().BeStatusCode(200);
+        await getTokenResponse.Should().HaveStatusCode(200);
 
         var getTokenResponseBody = await getTokenResponse.Content.ReadFromJsonAsync<GetTokenResponse>();
 
-        Assert.NotEmpty(getTokenResponseBody?.access_token);
+        getTokenResponseBody.Should().NotBeNull();
+        getTokenResponseBody!.access_token.Should().NotBeEmpty();
 
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", getTokenResponseBody?.access_token);
 

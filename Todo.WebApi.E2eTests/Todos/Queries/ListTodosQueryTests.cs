@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using FluentAssertions;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Todo.Application.Todos;
@@ -32,7 +33,7 @@ public class ListTodosQueryTests : TestBase
 
         var response = await httpClient.CallListTodos(1, 10);
 
-        await response.Should().BeStatusCode(401);
+        await response.Should().HaveStatusCode(401);
     }
 
     [Fact]
@@ -50,6 +51,7 @@ public class ListTodosQueryTests : TestBase
             new TodoDetailsDto() { Title = "B todo" },
         };
 
+        await response.Should().HaveStatusCode(200);
         (await response.Should()
             .ContainPaginatedListOf<TodoDetailsDto>())
             .Which.Items.Should().EqualIgnoringIdAndAuditProperties(expected);
@@ -69,6 +71,7 @@ public class ListTodosQueryTests : TestBase
             new TodoDetailsDto() { Title = "B todo" },
         };
 
+        await response.Should().HaveStatusCode(200);
         (await response.Should()
             .ContainPaginatedListOf<TodoDetailsDto>())
             .Which.Items.Should().EqualIgnoringIdAndAuditProperties(expected);
@@ -88,6 +91,7 @@ public class ListTodosQueryTests : TestBase
             new TodoDetailsDto() { Title = "B todo" },
         };
 
+        await response.Should().HaveStatusCode(200);
         (await response.Should()
             .ContainPaginatedListOf<TodoDetailsDto>())
             .Which.Items.Should().EqualIgnoringIdAndAuditProperties(expected);
@@ -109,6 +113,7 @@ public class ListTodosQueryTests : TestBase
             new TodoDetailsDto() { Title = "C todo" },
         };
 
+        await response.Should().HaveStatusCode(200);
         (await response.Should()
             .ContainPaginatedListOf<TodoDetailsDto>())
             .Which.Items.Should().EqualIgnoringIdAndAuditProperties(expected);

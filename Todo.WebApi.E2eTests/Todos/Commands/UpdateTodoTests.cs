@@ -1,7 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using FluentAssertions;
+using System.Threading.Tasks;
+using Todo.Application.Todos;
 using Todo.WebApi.E2eTests.Shared.Assertions;
 using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
+using Todo.WebApi.E2eTests.Shared.Extensions;
 using Xunit;
 
 namespace Todo.WebApi.E2eTests.Todos.Commands;
@@ -32,7 +35,7 @@ public class UpdateTodoTests : TestBase
             title = "Starve cat",
         });
 
-        await response.Should().BeStatusCode(401);
+        await response.Should().HaveStatusCode(401);
     }
 
     [Fact]
@@ -52,13 +55,20 @@ public class UpdateTodoTests : TestBase
             title = "Starve cat",
         });
 
-        await response.Should().BeStatusCode(200);
+        await response.Should().HaveStatusCode(200);
 
         var updatedTodo = await GetTodoById(httpClient, existingTodoId);
 
-        Assert.Equal(existingTodoId, updatedTodo?.Id);
-        Assert.Equal("Starve cat", updatedTodo?.Title);
-        Assert.Equal(Factory.MockedNow.ToDateTimeUtc(), updatedTodo?.LastUpdatedAt);
-        Assert.Equal(userId, updatedTodo?.LastUpdatedBy);
+        var expected = new TodoDetailsDto
+        {
+            Id = existingTodoId,
+            Title = "Starve cat",
+            LastUpdatedAt = MockedNowDateTimeUtc,
+            LastUpdatedBy = userId,
+        };
+
+        updatedTodo.Should().BeEquivalentTo(
+            expected,
+            options => options.ExcludingCreatedAtAndBy());
     }
 }

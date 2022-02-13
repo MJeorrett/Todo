@@ -1,8 +1,8 @@
-﻿using System.Net.Http;
+﻿using FluentAssertions;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Todo.WebApi.E2eTests.Shared.Assertions;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
-using Todo.WebApi.E2eTests.Shared.Extensions;
 using Xunit;
 
 namespace Todo.WebApi.E2eTests.Todos.Commands;
@@ -39,7 +39,7 @@ public class UpdateTodoValidationTests : TestBase, IAsyncLifetime
             title = "Play lots of pong"
         });
 
-        await response.Should().BeStatusCode(404);
+        await response.Should().HaveStatusCode(404);
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class UpdateTodoValidationTests : TestBase, IAsyncLifetime
             todoId = existingTodoId
         });
 
-        await actualResult.Should().BeStatusCode400WithErrorForField("Title");
+        await actualResult.Should().HaveStatusCode400WithErrorForField("Title");
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class UpdateTodoValidationTests : TestBase, IAsyncLifetime
             title = "",
         });
 
-        await actualResult.Should().BeStatusCode400WithErrorForField("Title");
+        await actualResult.Should().HaveStatusCode400WithErrorForField("Title");
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public class UpdateTodoValidationTests : TestBase, IAsyncLifetime
             title = new string('a', 257),
         });
 
-        await actualResult.Should().BeStatusCode400WithErrorForField("Title");
+        await actualResult.Should().HaveStatusCode400WithErrorForField("Title");
     }
 
     [Fact]
@@ -86,6 +86,6 @@ public class UpdateTodoValidationTests : TestBase, IAsyncLifetime
             title = new string('a', 256),
         });
 
-        await actualResult.Should().BeStatusCode(200);
+        await actualResult.Should().HaveStatusCode(200);
     }
 }
