@@ -22,10 +22,7 @@ public class UpdateTodoTests : TestBase
     {
         var authenticatedHttpClient = await CreateHttpClientAuthenticatedAsNewUser();
 
-        var existingTodoId = await CreateTodo(authenticatedHttpClient, new
-        {
-            title = "Feed cat"
-        });
+        var existingTodoId = await authenticatedHttpClient.DoCreateTodoWithTitle("Feed cat");
 
         var unauthenticatedHttpClient = Factory.CreateClient();
 
@@ -44,10 +41,7 @@ public class UpdateTodoTests : TestBase
         var userId = await Factory.CreateAspNetUser("test@mailinator.com", "Sitekit123!");
         var httpClient = await CreateHttpClientAuthenticatedAsUser("test@mailinator.com", "Sitekit123!");
 
-        var existingTodoId = await CreateTodo(httpClient, new
-        {
-            title = "Feed cat"
-        });
+        var existingTodoId = await httpClient.DoCreateTodoWithTitle("Feed cat");
 
         var response = await httpClient.CallUpdateTodo(new
         {
@@ -57,7 +51,7 @@ public class UpdateTodoTests : TestBase
 
         await response.Should().HaveStatusCode(200);
 
-        var updatedTodo = await GetTodoById(httpClient, existingTodoId);
+        var updatedTodo = await httpClient.DoGetTodoById(existingTodoId);
 
         var expected = new TodoDetailsDto
         {

@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -46,28 +47,6 @@ public class TestBase : IAsyncLifetime
         await Factory.CreateAspNetUser(userName, password);
 
         return await CreateHttpClientAuthenticatedAsUser(userName, password);
-    }
-
-    public static async Task<int> CreateTodo(HttpClient httpClient, object createTodoRequest)
-    {
-        var response = await httpClient.CallCreateTodo(createTodoRequest);
-
-        await response.Should().HaveStatusCode(201);
-
-        var parsedResponse = await response.Content.ReadFromJsonAsync<AppResponse<int>>();
-
-        return parsedResponse!.Content;
-    }
-
-    public static async Task<TodoDetailsDto?> GetTodoById(HttpClient httpClient, int todoId)
-    {
-        var response = await httpClient.CallGetTodoById(todoId);
-
-        await response.Should().HaveStatusCode(200);
-
-        var parsedResponse = await response.Content.ReadFromJsonAsync<AppResponse<TodoDetailsDto>>();
-
-        return parsedResponse!.Content;
     }
 
     private async Task CreateDefaultClientApplication()

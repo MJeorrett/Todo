@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Todo.WebApi.E2eTests.Shared.Assertions;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
+using Todo.WebApi.E2eTests.Shared.Extensions;
 using Xunit;
 
 namespace Todo.WebApi.E2eTests.Todos.Commands;
@@ -24,10 +25,7 @@ public class UpdateTodoValidationTests : TestBase, IAsyncLifetime
 
         _httpClient = await CreateHttpClientAuthenticatedAsNewUser();
 
-        existingTodoId = await CreateTodo(_httpClient, new
-        {
-            title = "Play pong"
-        });
+        existingTodoId = await _httpClient.DoCreateTodoWithTitle("Play pong");
     }
 
     [Fact]
