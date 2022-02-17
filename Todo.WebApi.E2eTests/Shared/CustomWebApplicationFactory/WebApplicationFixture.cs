@@ -3,9 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using Todo.Infrastructure.Persistence;
-using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
 
-namespace Todo.WebApi.E2eTests;
+namespace Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
 
 public class WebApplicationFixture
 {

@@ -2,12 +2,15 @@
 using Todo.Application.Common.AppRequests;
 using Todo.Application.Common.Interfaces;
 using Todo.Domain.Entities;
+using Todo.Domain.Enums;
 
 namespace Todo.Application.Todos.Commands.Create;
 
 public record CreateTodoCommand
 {
     public string Title { get; init; } = null!;
+
+    public TodoStatus? StatusId { get; init; }
 }
 
 public class CreateTodoCommandHandler : IRequestHandler<CreateTodoCommand, int>
@@ -30,6 +33,7 @@ public class CreateTodoCommandHandler : IRequestHandler<CreateTodoCommand, int>
         var todoEntity = new TodoEntity()
         {
             Title = command.Title,
+            Status = command.StatusId ?? TodoStatus.New,
         };
 
         _dbContext.Todos.Add(todoEntity);

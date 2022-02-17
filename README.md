@@ -14,6 +14,9 @@ Implements a CQRS approach to laying out an Asp.Net core application.
 ### Auditable Entities
 An approach to ensuring CreatedAt, CreatedBy, LastUpdatedAt and LastUpdatedBy properties on entities are consistently updated when creating / saving in the db context.
 
+### Enums
+An approach for mapping enums in code to a database table automatically.
+
 ## Stack
 - Asp.Net Core 6
 - EF Core 6 (SQL Server)
@@ -24,20 +27,23 @@ An approach to ensuring CreatedAt, CreatedBy, LastUpdatedAt and LastUpdatedBy pr
 - XUnit
 
 ## TODO
-- list todos e2e test
 - user management (super admin)
-- paginated list todos
-  - unit test paginatedListResponse
 - searching list todos
 - sorting list todos
 - Email sending
 	- Embedded image
 - Test data builders
-- Versioning
+- Api versioning
 - Roles
 	- resource baed authorization policy.
 - download as csv
 - review access modifiers
+- startup logging
+- figure out how better to handle enum initialization, right now have to tell respawn to ignore TodoStatus table which isn't ideal'.
+- :heavy_check_mark: use separate dtos in e2e test project
+- :heavy_check_mark: list todos e2e test
+- :heavy_check_mark: paginated list todos
+  - :heavy_check_mark: unit test paginatedListResponse
 - :heavy_check_mark: HttpClient extensions in e2e tests.
 - :heavy_check_mark: Fix todo test suites not runing on their own.
 	- Use XUnit instead of NUnit

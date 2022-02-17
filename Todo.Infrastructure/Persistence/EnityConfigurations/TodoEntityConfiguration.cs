@@ -22,5 +22,12 @@ public class TodoEntityConfiguration : IEntityTypeConfiguration<TodoEntity>
 
         builder.Property(_ => _.Title)
             .HasColumnType("varchar(256)");
+
+        builder.Property(_ => _.Status)
+            .HasColumnName("TodoStatusId");
+
+        builder.HasOne(_ => _.StatusEntity)
+            .WithMany(_ => _.Todos)
+            .HasForeignKey(_ => _.Status);
     }
 }

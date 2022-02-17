@@ -9,5 +9,7 @@ public class UpdateTodoCommandValidator : AbstractValidator<UpdateTodoCommand>
     public UpdateTodoCommandValidator(IApplicationDbContext dbContext)
     {
         RuleFor(_ => _.Title).TodoTitleRules();
+
+        RuleFor(_ => _.StatusId).IsInEnum();
     }
 }

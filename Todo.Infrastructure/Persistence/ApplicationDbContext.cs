@@ -4,6 +4,7 @@ using System.Reflection;
 using Todo.Application.Common.Interfaces;
 using Todo.Domain.Common;
 using Todo.Domain.Entities;
+using Todo.Domain.Enums;
 using Todo.Infrastructure.Identity;
 
 namespace Todo.Infrastructure.Persistence;
@@ -11,6 +12,7 @@ namespace Todo.Infrastructure.Persistence;
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationDbContext
 {
     public DbSet<TodoEntity> Todos { get; init; } = null!;
+    public DbSet<TodoStatusEntity> TodoStatuses { get; init; } = null!;
 
     private readonly IDateTimeService _dateTimeService;
     private readonly ICurrentUserService _currentUserService;

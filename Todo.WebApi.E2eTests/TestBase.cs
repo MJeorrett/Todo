@@ -1,14 +1,7 @@
-﻿using FluentAssertions;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Todo.Application.Common.AppRequests;
-using Todo.Application.Todos;
-using Todo.WebApi.E2eTests.Shared.Assertions;
 using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
-using Todo.WebApi.E2eTests.Shared.Endpoints;
 using Todo.WebApi.E2eTests.Shared.Models;
 using Xunit;
 

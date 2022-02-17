@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Todo.WebApi.E2eTests.Shared.Assertions;
+using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
 using Todo.WebApi.E2eTests.Shared.Extensions;
 using Xunit;

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Todo.Application.Common.AppRequests;
 using Todo.Application.Common.Interfaces;
+using Todo.Domain.Enums;
 
 namespace Todo.Application.Todos.Commands.Update;
 
@@ -10,6 +11,8 @@ public record UpdateTodoCommand
     public int TodoId { get; init; }
 
     public string Title { get; init; } = "";
+
+    public TodoStatus StatusId { get; init; }
 }
 
 public class UpdateTodoCommandHandler : IRequestHandler<UpdateTodoCommand>
@@ -35,6 +38,7 @@ public class UpdateTodoCommandHandler : IRequestHandler<UpdateTodoCommand>
         if (existingTodo is null) return new AppResponse(404);
 
         existingTodo.Title = command.Title;
+        existingTodo.Status = command.StatusId;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 

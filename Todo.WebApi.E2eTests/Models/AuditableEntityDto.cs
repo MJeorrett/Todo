@@ -1,6 +1,8 @@
-﻿namespace Todo.Application.Common.Models;
+﻿using System;
 
-public abstract record AuditableEntityDto
+namespace Todo.WebApi.E2eTests.Models;
+
+internal abstract record AuditableEntityDto
 {
     public int Id { get; init; }
 

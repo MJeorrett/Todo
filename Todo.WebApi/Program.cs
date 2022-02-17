@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Todo.Application;
 using Todo.Application.Common.Interfaces;
 using Todo.Infrastructure;
+using Todo.Infrastructure.Persistence;
 using Todo.WebApi.Extensions;
 using Todo.WebApi.Services;
 
@@ -30,6 +32,11 @@ services.AddScoped<ICurrentUserService, CurrentUserService>();
 #endregion
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Test")
+{
+    EnsureDatabaseCreatedAndMigrated();
+}
 
 #region Configure
 
@@ -87,6 +94,13 @@ void AddAuthentication()
             ValidIssuer = identityOptions.Issuer,
         };
     });
+}
+
+void EnsureDatabaseCreatedAndMigrated()
+{
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    dbContext.Database.Migrate();
 }
 
 #endregion

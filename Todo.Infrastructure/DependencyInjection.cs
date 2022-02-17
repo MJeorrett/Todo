@@ -4,9 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Cryptography;
 using Todo.Application.Common.Interfaces;
+using Todo.Domain.Enums;
 using Todo.Infrastructure.DateTimes;
 using Todo.Infrastructure.Extensions;
 using Todo.Infrastructure.Identity;
@@ -25,6 +24,8 @@ public static class DependencyInjection
         services.AddDateTimes();
         services.AddIdentity(configuration, environment.EnvironmentName);
         services.AddPersistence(configuration);
+
+        services.AddHostedService<EnumInitializer<TodoStatus, TodoStatusEntity>>();
 
         if (environment.IsDevelopment())
         {

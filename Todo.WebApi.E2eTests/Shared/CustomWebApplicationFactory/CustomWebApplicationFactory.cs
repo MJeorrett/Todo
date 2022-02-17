@@ -41,7 +41,10 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 
         _checkpoint = new Checkpoint
         {
-            TablesToIgnore = new[] { new Table("__EFMigrationsHistory") },
+            TablesToIgnore = new[] {
+               new Table("__EFMigrationsHistory"),
+               new Table("TodoStatus"),
+            },
         };
 
         base.ConfigureWebHost(builder);

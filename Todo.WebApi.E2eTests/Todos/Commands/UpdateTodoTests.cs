@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using System.Threading.Tasks;
-using Todo.Application.Todos;
+using Todo.WebApi.E2eTests.Models;
 using Todo.WebApi.E2eTests.Shared.Assertions;
 using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
@@ -41,12 +41,17 @@ public class UpdateTodoTests : TestBase
         var userId = await Factory.CreateAspNetUser("test@mailinator.com", "Sitekit123!");
         var httpClient = await CreateHttpClientAuthenticatedAsUser("test@mailinator.com", "Sitekit123!");
 
-        var existingTodoId = await httpClient.DoCreateTodoWithTitle("Feed cat");
-
-        var response = await httpClient.CallUpdateTodo(new
+        var existingTodoId = await httpClient.DoCreateTodo(new CreateTodoDto
         {
-            todoId = existingTodoId,
-            title = "Starve cat",
+            Title = "Feed cat",
+            StatusId = 0,
+        });
+
+        var response = await httpClient.CallUpdateTodo(new UpdateTodoDto
+        {
+            TodoId = existingTodoId,
+            Title = "Starve cat",
+            StatusId = 1,
         });
 
         await response.Should().HaveStatusCode(200);
@@ -57,6 +62,8 @@ public class UpdateTodoTests : TestBase
         {
             Id = existingTodoId,
             Title = "Starve cat",
+            StatusId = 1,
+            StatusName = "In progress",
             LastUpdatedAt = MockedNowDateTimeUtc,
             LastUpdatedBy = userId,
         };
