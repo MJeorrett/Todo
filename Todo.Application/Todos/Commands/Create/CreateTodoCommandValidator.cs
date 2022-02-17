@@ -7,5 +7,7 @@ public class CreateTodoCommandValidator : AbstractValidator<CreateTodoCommand>
     public CreateTodoCommandValidator()
     {
         RuleFor(_ => _.Title).TodoTitleRules();
+
+        RuleFor(_ => _.StatusId).IsInEnum();
     }
 }

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Todo.Application.Common.AppRequests;
-using Todo.Application.Todos;
+using Todo.WebApi.E2eTests.Models;
 using Todo.WebApi.E2eTests.Shared.Assertions;
+using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
 using Todo.WebApi.E2eTests.Shared.Extensions;
 using Xunit;
@@ -59,8 +60,8 @@ public class ListTodosQueryTests : TestBase
 
         var expected = new List<TodoDetailsDto>
         {
-            new TodoDetailsDto() { Title = "A todo" },
-            new TodoDetailsDto() { Title = "B todo" },
+            new TodoDetailsDto() { Title = "A todo", StatusId = 0, StatusName = "New" },
+            new TodoDetailsDto() { Title = "B todo", StatusId = 0, StatusName = "New" },
         };
 
         await response.Should().HaveStatusCode(200);
@@ -77,8 +78,8 @@ public class ListTodosQueryTests : TestBase
 
         var expected = new List<TodoDetailsDto>
         {
-            new TodoDetailsDto() { Title = "A todo" },
-            new TodoDetailsDto() { Title = "B todo" },
+            new TodoDetailsDto() { Title = "A todo", StatusId = 0, StatusName = "New" },
+            new TodoDetailsDto() { Title = "B todo", StatusId = 0, StatusName = "New" },
         };
 
         await response.Should().HaveStatusCode(200);
@@ -95,7 +96,7 @@ public class ListTodosQueryTests : TestBase
 
         var expected = new List<TodoDetailsDto>
         {
-            new TodoDetailsDto() { Title = "B todo" },
+            new TodoDetailsDto() { Title = "B todo", StatusId = 0, StatusName = "New" },
         };
 
         await response.Should().HaveStatusCode(200);
@@ -112,9 +113,9 @@ public class ListTodosQueryTests : TestBase
 
         var expected = new List<TodoDetailsDto>
         {
-            new TodoDetailsDto() { Title = "A todo" },
-            new TodoDetailsDto() { Title = "B todo" },
-            new TodoDetailsDto() { Title = "C todo" },
+            new TodoDetailsDto() { Title = "A todo", StatusId = 0, StatusName = "New" },
+            new TodoDetailsDto() { Title = "B todo", StatusId = 0, StatusName = "New" },
+            new TodoDetailsDto() { Title = "C todo", StatusId = 0, StatusName = "New" },
         };
 
         await response.Should().HaveStatusCode(200);

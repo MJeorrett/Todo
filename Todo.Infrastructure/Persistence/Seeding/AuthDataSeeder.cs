@@ -18,8 +18,8 @@ public class AuthDataSeeder : IHostedService
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         using var scope = _serviceProvider.CreateScope();
-
         var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
         await dbContext.Database.EnsureCreatedAsync(cancellationToken);
 
         await EnsureDefaultUserCreated(scope);

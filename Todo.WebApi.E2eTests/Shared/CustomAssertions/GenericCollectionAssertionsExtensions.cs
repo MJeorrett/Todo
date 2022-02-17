@@ -2,11 +2,11 @@
 using FluentAssertions.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Todo.Application.Common.Models;
+using Todo.WebApi.E2eTests.Models;
 
 namespace Todo.WebApi.E2eTests.Shared.Assertions;
 
-public static class GenericCollectionAssertionsExtensions
+internal static class GenericCollectionAssertionsExtensions
 {
     public static AndConstraint<GenericCollectionAssertions<T>> EqualIgnoringIdAndAuditProperties<T>(this GenericCollectionAssertions<T> target, IEnumerable<T> expected)
         where T : AuditableEntityDto

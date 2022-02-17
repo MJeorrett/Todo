@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using System.Threading.Tasks;
-using Todo.Application.Todos;
+using Todo.Domain.Enums;
+using Todo.WebApi.E2eTests.Models;
 using Todo.WebApi.E2eTests.Shared.Assertions;
 using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
@@ -23,7 +24,11 @@ public class TodoE2eTests : TestBase
         var userId = await Factory.CreateAspNetUser("test@mailinator.com", "Sitekit123!");
         var httpClient = await CreateHttpClientAuthenticatedAsUser("test@mailinator.com", "Sitekit123!");
 
-        var todoId = await httpClient.DoCreateTodoWithTitle("Clean bike");
+        var todoId = await httpClient.DoCreateTodo(new CreateTodoDto
+        {
+            Title = "Clean bike",
+            StatusId = (int)TodoStatus.InProgress,
+        });
 
         var getByIdResponse = await httpClient.CallGetTodoById(todoId);
 
@@ -31,6 +36,8 @@ public class TodoE2eTests : TestBase
         {
             Id = todoId,
             Title = "Clean bike",
+            StatusId = (int)TodoStatus.InProgress,
+            StatusName = "In progress",
             CreatedAt = MockedNowDateTimeUtc,
             CreatedBy = userId,
             LastUpdatedAt = null,

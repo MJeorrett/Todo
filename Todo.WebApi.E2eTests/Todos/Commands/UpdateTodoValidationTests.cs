@@ -1,7 +1,12 @@
 ﻿using FluentAssertions;
+using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Todo.Domain.Enums;
+using Todo.WebApi.E2eTests.Models;
 using Todo.WebApi.E2eTests.Shared.Assertions;
+using Todo.WebApi.E2eTests.Shared.CustomWebApplicationFactory;
 using Todo.WebApi.E2eTests.Shared.Endpoints;
 using Todo.WebApi.E2eTests.Shared.Extensions;
 using Xunit;
@@ -13,6 +18,13 @@ public class UpdateTodoValidationTests : TestBase, IAsyncLifetime
 {
     private HttpClient _httpClient = null!;
     private int existingTodoId;
+
+    private UpdateTodoDto BuildValidDto() => new()
+    {
+        TodoId = existingTodoId,
+        Title = "Make awesome app",
+        StatusId = 1,
+    };
 
     public UpdateTodoValidationTests(WebApplicationFixture webApplicationFixture) :
         base(webApplicationFixture.Factory)
@@ -29,12 +41,19 @@ public class UpdateTodoValidationTests : TestBase, IAsyncLifetime
     }
 
     [Fact]
+    public async Task ShouldReturn200WhenAllOk()
+    {
+        var actualResult = await _httpClient.CallUpdateTodo(BuildValidDto());
+
+        await actualResult.Should().HaveStatusCode(200);
+    }
+
+    [Fact]
     public async Task ShouldReturn404WhenTodoNotFound()
     {
-        var response = await _httpClient.CallUpdateTodo(new
+        var response = await _httpClient.CallUpdateTodo(BuildValidDto() with
         {
-            todoId = existingTodoId + 1,
-            title = "Play lots of pong"
+            TodoId = existingTodoId + 1,
         });
 
         await response.Should().HaveStatusCode(404);
@@ -43,9 +62,9 @@ public class UpdateTodoValidationTests : TestBase, IAsyncLifetime
     [Fact]
     public async Task ShouldReturn400WhenNoTitleProvied()
     {
-        var actualResult = await _httpClient.CallUpdateTodo(new
+        var actualResult = await _httpClient.CallUpdateTodo(BuildValidDto() with
         {
-            todoId = existingTodoId
+            Title = null,
         });
 
         await actualResult.Should().HaveStatusCode400WithErrorForField("Title");
@@ -54,10 +73,9 @@ public class UpdateTodoValidationTests : TestBase, IAsyncLifetime
     [Fact]
     public async Task ShouldReturn400WhenTitleIsEmptyString()
     {
-        var actualResult = await _httpClient.CallUpdateTodo(new
+        var actualResult = await _httpClient.CallUpdateTodo(BuildValidDto() with
         {
-            todoId = existingTodoId,
-            title = "",
+            Title = "",
         });
 
         await actualResult.Should().HaveStatusCode400WithErrorForField("Title");
@@ -66,24 +84,22 @@ public class UpdateTodoValidationTests : TestBase, IAsyncLifetime
     [Fact]
     public async Task ShouldReturn400WhenTitleIsToLong()
     {
-        var actualResult = await _httpClient.CallUpdateTodo(new
+        var actualResult = await _httpClient.CallUpdateTodo(BuildValidDto() with
         {
-            todoId = existingTodoId,
-            title = new string('a', 257),
+            Title = new string('a', 257),
         });
 
         await actualResult.Should().HaveStatusCode400WithErrorForField("Title");
     }
 
     [Fact]
-    public async Task ShouldReturn200WhenAllOk()
+    public async Task ShouldReturn400WhenTodoStatusIsNotValid()
     {
-        var actualResult = await _httpClient.CallUpdateTodo(new
+        var actualResult = await _httpClient.CallCreateTodo(BuildValidDto() with
         {
-            todoId = existingTodoId,
-            title = new string('a', 256),
+            StatusId = (int)Enum.GetValues<TodoStatus>().Max() + 1,
         });
 
-        await actualResult.Should().HaveStatusCode(200);
+        await actualResult.Should().HaveStatusCode400WithErrorForField("StatusId");
     }
 }

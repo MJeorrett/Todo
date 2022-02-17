@@ -1,9 +1,9 @@
 ﻿using FluentAssertions.Equivalency;
-using Todo.Application.Todos;
+using Todo.WebApi.E2eTests.Models;
 
 namespace Todo.WebApi.E2eTests.Shared.Extensions;
 
-public static class EquivalencyAssertionOptionsTodoDetailsDtoExtensions
+internal static class EquivalencyAssertionOptionsTodoDetailsDtoExtensions
 {
     public static EquivalencyAssertionOptions<TodoDetailsDto> ExcludingCreatedAtAndBy(this EquivalencyAssertionOptions<TodoDetailsDto> target)
     {
